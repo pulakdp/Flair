@@ -3,6 +3,7 @@ package com.flairmusicplayer.flair.models;
 import android.content.Context;
 
 import com.flairmusicplayer.flair.R;
+import com.flairmusicplayer.flair.loaders.MostAndRecentlyPlayedSongsLoader;
 import com.flairmusicplayer.flair.providers.RecentStore;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public class RecentlyPlayedPlaylist extends AbsSmartPlaylist {
     }
 
     @Override
-    public ArrayList<Song> getSongs() {
-        return null;
+    public ArrayList<Song> getSongs(Context context) {
+        return MostAndRecentlyPlayedSongsLoader.getSongs(context, MostAndRecentlyPlayedSongsLoader.QueryType.RecentlyPlayed);
     }
 
     @Override

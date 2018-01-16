@@ -25,7 +25,7 @@ public abstract class AbsSmartPlaylist extends Playlist {
         this.iconRes = R.drawable.ic_queue_music_black_24dp;
     }
 
-    public abstract ArrayList<Song> getSongs();
+    public abstract ArrayList<Song> getSongs(Context context);
 
     public abstract void clearPlaylist(Context context);
 }
