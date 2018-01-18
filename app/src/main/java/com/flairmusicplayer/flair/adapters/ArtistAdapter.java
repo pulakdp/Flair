@@ -3,12 +3,9 @@ package com.flairmusicplayer.flair.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Artist;
@@ -16,9 +13,6 @@ import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Author: PulakDebasish
@@ -38,7 +32,7 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
     public ArtistItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         @SuppressLint("InflateParams")
-        View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_artist, null);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_single, null);
 
         return new ArtistItemViewHolder(itemView);
     }
@@ -51,9 +45,15 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         int songCount = artists.get(position).getSongCount();
         String albumOrAlbums = albumCount > 1 ? " Albums" : " Album";
         String songOrSongs = songCount > 1 ? " Songs" : " Song";
-        holder.artistName.setText(artistName);
-        holder.artistInfo.setText(albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs);
-        holder.artistInitials.setImageDrawable(FlairUtils.getRoundTextDrawable(context, artistName));
+
+        if (holder.itemTitle != null)
+            holder.itemTitle.setText(artistName);
+
+        if (holder.itemDetailText != null)
+            holder.itemDetailText.setText(albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs);
+
+        if (holder.itemImage != null)
+            holder.itemImage.setImageDrawable(FlairUtils.getRoundTextDrawable(context, artistName));
     }
 
     public void setData(ArrayList<Artist> artists) {
@@ -72,20 +72,10 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         return String.valueOf(artists.get(position).getArtistName().charAt(0)).toUpperCase();
     }
 
-    public class ArtistItemViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.artist_initials)
-        ImageView artistInitials;
-
-        @BindView(R.id.artist_name)
-        TextView artistName;
-
-        @BindView(R.id.artist_album_song_info)
-        TextView artistInfo;
+    public class ArtistItemViewHolder extends SingleItemViewHolder {
 
         public ArtistItemViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
         }
     }
 

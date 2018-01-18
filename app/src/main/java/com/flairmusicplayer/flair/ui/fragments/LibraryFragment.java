@@ -111,7 +111,7 @@ public class LibraryFragment extends MusicServiceFragment {
         tabViewPagerAdapter.addFragment(new SongsFragment(), getString(R.string.tab_songs));
         tabViewPagerAdapter.addFragment(new AlbumsFragment(), getString(R.string.tab_albums));
         tabViewPagerAdapter.addFragment(new ArtistsFragment(), getString(R.string.tab_artists));
-        tabViewPagerAdapter.addFragment(new PlaylistsFragment(), getString(R.string.tab_playlists));
+        tabViewPagerAdapter.addFragment(new PlaylistFragment(), getString(R.string.tab_playlists));
         viewPager.setAdapter(tabViewPagerAdapter);
     }
 }

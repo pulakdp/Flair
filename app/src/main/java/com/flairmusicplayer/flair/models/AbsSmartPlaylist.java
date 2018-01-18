@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public abstract class AbsSmartPlaylist extends Playlist {
     @DrawableRes
-    public final int iconRes;
+    private final int iconRes;
 
     public AbsSmartPlaylist(final String name, final int iconRes) {
         super(-Math.abs(31 * name.hashCode() + (iconRes * name.hashCode() * 31 * 31)), name);
@@ -23,6 +23,10 @@ public abstract class AbsSmartPlaylist extends Playlist {
     public AbsSmartPlaylist() {
         super();
         this.iconRes = R.drawable.ic_queue_music_black_24dp;
+    }
+
+    public int getIconRes() {
+        return iconRes;
     }
 
     public abstract ArrayList<Song> getSongs(Context context);
