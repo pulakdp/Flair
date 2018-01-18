@@ -44,6 +44,10 @@ public class LibraryFragment extends MusicServiceFragment {
     public LibraryFragment() {
     }
 
+    public static LibraryFragment newInstance() {
+        return new LibraryFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
