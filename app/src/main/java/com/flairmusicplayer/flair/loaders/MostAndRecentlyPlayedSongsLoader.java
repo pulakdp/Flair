@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class MostAndRecentlyPlayedSongsLoader {
 
-    public static final int NUMBER_OF_TOP_TRACKS = 99;
+    private static final int NUMBER_OF_TOP_TRACKS = 99;
 
     public enum QueryType {
         MostPlayed,
@@ -113,7 +113,6 @@ public class MostAndRecentlyPlayedSongsLoader {
                 return new SortedCursor(songCursor, order, BaseColumns._ID);
             }
         }
-
         return null;
     }
 }

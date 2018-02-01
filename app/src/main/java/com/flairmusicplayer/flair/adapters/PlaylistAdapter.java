@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.AbsSmartPlaylist;
 import com.flairmusicplayer.flair.models.Playlist;
+import com.flairmusicplayer.flair.utils.NavUtils;
 
 import java.util.ArrayList;
 
@@ -79,6 +80,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
             super(itemView);
             if (itemDetailText != null)
                 itemDetailText.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onClick(View view) {
+            super.onClick(view);
+            Playlist playlist = allPlaylist.get(getAdapterPosition());
+            NavUtils.goToPlaylist(activity, playlist);
         }
     }
 

@@ -7,7 +7,9 @@ import android.media.audiofx.AudioEffect;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.services.FlairMusicController;
+import com.flairmusicplayer.flair.ui.activities.PlaylistDetailActivity;
 
 /**
  * Author: PulakDebasish
@@ -31,6 +33,10 @@ public class NavUtils {
         }
     }
 
-
+    public static void goToPlaylist(@NonNull final Activity activity, final Playlist playlist) {
+        final Intent intent = new Intent(activity, PlaylistDetailActivity.class);
+        intent.putExtra(PlaylistDetailActivity.EXTRA_PLAYLIST, playlist);
+        activity.startActivity(intent);
+    }
 
 }

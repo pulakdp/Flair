@@ -26,6 +26,7 @@
         </activity>
 
         <activity android:name=".ui.activities.SearchActivity" />
+        <activity android:name=".ui.activities.PlaylistDetailActivity"/>
 
         <service android:name=".services.FlairMusicService"
             android:enabled="true"/>

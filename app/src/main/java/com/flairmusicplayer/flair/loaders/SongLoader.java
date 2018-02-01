@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class SongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> {
 
-    private static final String BASE_SELECTION = AudioColumns.IS_MUSIC + "= 1" + " AND " + AudioColumns.TITLE + " != ''";
+    public static final String BASE_SELECTION = AudioColumns.IS_MUSIC + "= 1" + " AND " + AudioColumns.TITLE + " != ''";
 
     public SongLoader(Context context) {
         super(context);
@@ -31,22 +31,22 @@ public class SongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> {
 
     public static Cursor createSongCursor(Context context, String selection, String[] selectionArgs, String sortOrder) {
         String finalSelection = BASE_SELECTION;
-        if (!TextUtils.isEmpty(selection) || selection != null){
+        if (!TextUtils.isEmpty(selection) || selection != null) {
             finalSelection += " AND " + selection;
         }
 
         return context.getContentResolver()
                 .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, new String[]{
-                BaseColumns._ID, // 0
-                AudioColumns.TITLE, // 1
-                AudioColumns.DURATION, // 2
-                AudioColumns.TRACK, // 3
-                AudioColumns.ALBUM_ID, // 4
-                AudioColumns.ALBUM, // 5
-                AudioColumns.ARTIST_ID, // 6
-                AudioColumns.ARTIST, // 7
+                        BaseColumns._ID, // 0
+                        AudioColumns.TITLE, // 1
+                        AudioColumns.DURATION, // 2
+                        AudioColumns.TRACK, // 3
+                        AudioColumns.ALBUM_ID, // 4
+                        AudioColumns.ALBUM, // 5
+                        AudioColumns.ARTIST_ID, // 6
+                        AudioColumns.ARTIST, // 7
 
-        }, finalSelection, selectionArgs, sortOrder);
+                }, finalSelection, selectionArgs, sortOrder);
     }
 
     public static ArrayList<Song> getSongs(@NonNull final Context context, final String query) {
@@ -64,7 +64,7 @@ public class SongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> {
         if (musicCursor != null && musicCursor.moveToFirst()) {
             do {
                 list.add(getSongFromCursor(musicCursor));
-            }while (musicCursor.moveToNext());
+            } while (musicCursor.moveToNext());
         }
         if (musicCursor != null)
             musicCursor.close();
@@ -73,20 +73,16 @@ public class SongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> {
 
     @NonNull
     public static Song getSongFromCursor(Cursor musicCursor) {
-        if (musicCursor != null) {
-            int id = musicCursor.getInt(0);
-            String title = musicCursor.getString(1);
-            long duration = musicCursor.getLong(2);
-            int trackNumber = musicCursor.getInt(3);
-            int albumId = musicCursor.getInt(4);
-            String albumName = musicCursor.getString(5);
-            int artistId = musicCursor.getInt(6);
-            String artistName = musicCursor.getString(7);
+        final int id = musicCursor.getInt(0);
+        final String title = musicCursor.getString(1);
+        final long duration = musicCursor.getLong(2);
+        final int trackNumber = musicCursor.getInt(3);
+        final int albumId = musicCursor.getInt(4);
+        final String albumName = musicCursor.getString(5);
+        final int artistId = musicCursor.getInt(6);
+        final String artistName = musicCursor.getString(7);
 
-            return new Song(id, title, duration, trackNumber, albumId, albumName, artistId, artistName);
-        }else {
-            return null;
-        }
+        return new Song(id, title, duration, trackNumber, albumId, albumName, artistId, artistName);
     }
 
     @Override

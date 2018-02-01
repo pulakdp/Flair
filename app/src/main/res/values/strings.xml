@@ -18,5 +18,6 @@
     <string name="most_played">Most Played</string>
     <string name="recently_played">Recently Played</string>
     <string name="recently_added">Recently Added</string>
+    <string name="no_songs_in_playlist">No songs yet</string>
 
 </resources>
