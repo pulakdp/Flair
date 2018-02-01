@@ -19,7 +19,7 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/player_toolbar"
-            style="@style/Toolbar"
+            style="@style/PlayerToolbar"
             android:background="@android:color/transparent"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
