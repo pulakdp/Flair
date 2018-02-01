@@ -1,6 +1,7 @@
 package com.flairmusicplayer.flair.customviews;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -8,7 +9,7 @@ import android.widget.ImageView;
  * Author: PulakDebasish
  */
 
-public class SquareImageView extends ImageView {
+public class SquareImageView extends AppCompatImageView {
 
     public SquareImageView(Context context) {
         super(context);

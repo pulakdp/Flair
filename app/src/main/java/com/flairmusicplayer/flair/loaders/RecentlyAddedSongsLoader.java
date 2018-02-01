@@ -27,8 +27,8 @@ public class RecentlyAddedSongsLoader {
             cutoff = fourWeeksAgo;
         }
 
-        String selection = (MediaStore.Audio.AudioColumns.IS_MUSIC + "=1") +
-                " AND " + MediaStore.Audio.Media.DATE_ADDED + ">?" +
+        String selection = (MediaStore.Audio.AudioColumns.IS_MUSIC + " = 1") +
+                " AND " + MediaStore.Audio.Media.DATE_ADDED + " > " +
                 cutoff;
 
         return SongLoader.createSongCursor(

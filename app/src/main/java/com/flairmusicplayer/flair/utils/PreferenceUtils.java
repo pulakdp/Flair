@@ -10,9 +10,9 @@ import android.preference.PreferenceManager;
 
 public class PreferenceUtils {
 
-    public static final String ACTIVE_FRAGMENT = "active_fragment";
+    private static final String ACTIVE_FRAGMENT = "active_fragment";
 
-    public static final String RECENTLY_ADDED_CUTOFF = "recently_added_cutoff";
+    private static final String RECENTLY_ADDED_CUTOFF = "recently_added_cutoff";
 
     private static PreferenceUtils instance;
 
