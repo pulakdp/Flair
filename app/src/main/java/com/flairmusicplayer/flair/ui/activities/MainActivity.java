@@ -59,7 +59,7 @@ public class MainActivity extends SlidingPanelActivity
                 break;
             case FOLDERS:
                 navigationView.setCheckedItem(R.id.nav_folder);
-                setCurrentFragment(FoldersFragment.newInstance());
+                setCurrentFragment(FoldersFragment.newInstance(this));
         }
     }
 
@@ -116,9 +116,9 @@ public class MainActivity extends SlidingPanelActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_library) {
-
+            setActiveFragment(LIBRARY);
         } else if (id == R.id.nav_folder) {
-
+            setActiveFragment(FOLDERS);
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_about) {

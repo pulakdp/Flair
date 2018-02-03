@@ -33,6 +33,7 @@ public class PlaylistDetailActivity extends SlidingPanelActivity
 
     private static final int LOADER_ID = 5;
     public static String EXTRA_PLAYLIST = "extra_playlist";
+
     @BindView(R.id.playlist_toolbar)
     Toolbar toolbar;
 

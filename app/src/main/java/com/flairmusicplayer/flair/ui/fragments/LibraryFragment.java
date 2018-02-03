@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -22,12 +23,14 @@ import com.flairmusicplayer.flair.ui.activities.MainActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Author: PulakDebasish
  */
 
-public class LibraryFragment extends MusicServiceFragment {
+public class LibraryFragment extends MusicServiceFragment
+        implements ViewPager.OnPageChangeListener {
 
     @BindView(R.id.library_toolbar)
     Toolbar toolbar;
@@ -41,6 +44,8 @@ public class LibraryFragment extends MusicServiceFragment {
     @BindView(R.id.shuffle_fab)
     FloatingActionButton shuffleFab;
 
+    private Unbinder unbinder;
+
     public LibraryFragment() {
     }
 
@@ -50,10 +55,15 @@ public class LibraryFragment extends MusicServiceFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_library, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).addDrawerToggle(toolbar);
 
@@ -61,25 +71,8 @@ public class LibraryFragment extends MusicServiceFragment {
 
         tabLayout.setupWithViewPager(tabPager);
 
-        tabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (position != 0)
-                    hideFab();
-                else
-                    showFab();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        tabPager.setCurrentItem(0);
+        tabPager.addOnPageChangeListener(this);
 
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,8 +80,13 @@ public class LibraryFragment extends MusicServiceFragment {
                 shuffleAll(getActivity());
             }
         });
+    }
 
-        return rootView;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        tabPager.removeOnPageChangeListener(this);
+        unbinder.unbind();
     }
 
     public void hideFab() {
@@ -117,5 +115,23 @@ public class LibraryFragment extends MusicServiceFragment {
         tabViewPagerAdapter.addFragment(new ArtistsFragment(), getString(R.string.tab_artists));
         tabViewPagerAdapter.addFragment(new PlaylistFragment(), getString(R.string.tab_playlists));
         viewPager.setAdapter(tabViewPagerAdapter);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position != 0)
+            hideFab();
+        else
+            showFab();
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

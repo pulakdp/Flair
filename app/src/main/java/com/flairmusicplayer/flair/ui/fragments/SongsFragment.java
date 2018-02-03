@@ -1,9 +1,8 @@
 package com.flairmusicplayer.flair.ui.fragments;
 
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -35,12 +34,10 @@ public class SongsFragment extends MusicServiceFragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Song>> {
 
     private static final int LOADER_ID = 1;
-    public SongAdapter songAdapter;
-    private ArrayList<Song> songs;
     @BindView(R.id.recycler_view)
     public FastScrollRecyclerView songList;
-    //    private Playback playback;
-    Unbinder unbinder;
+    public SongAdapter songAdapter;
+    private Unbinder unbinder;
 
     public SongsFragment() {
     }
@@ -48,13 +45,7 @@ public class SongsFragment extends MusicServiceFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        songs = new ArrayList<>();
-        songAdapter = new SongAdapter(songs);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+        songAdapter = new SongAdapter(new ArrayList<Song>());
     }
 
     @Override
@@ -65,13 +56,15 @@ public class SongsFragment extends MusicServiceFragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_recycler_view, container, false);
         unbinder = ButterKnife.bind(this, rootView);
+
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
         songList.setLayoutManager(layoutManager);
         songList.setAdapter(songAdapter);
+
         return rootView;
     }
 
@@ -94,17 +87,10 @@ public class SongsFragment extends MusicServiceFragment
         });
     }
 
-    private static int getScreenWidth() {
-        return Resources.getSystem().getDisplayMetrics().widthPixels;
-    }
-
-    private static int getScreenHeight() {
-        return Resources.getSystem().getDisplayMetrics().heightPixels;
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        songList.addOnScrollListener(null);
         unbinder.unbind();
     }
 
@@ -115,12 +101,13 @@ public class SongsFragment extends MusicServiceFragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Song>> loader, ArrayList<Song> data) {
-        songs = data;
-        songAdapter.setData(songs);
+        if (songAdapter != null)
+            songAdapter.setData(data);
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Song>> loader) {
-        songAdapter.setData(new ArrayList<Song>());
+        if (songAdapter != null)
+            songAdapter.setData(new ArrayList<Song>());
     }
 }

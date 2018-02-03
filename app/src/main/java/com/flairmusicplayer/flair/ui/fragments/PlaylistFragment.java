@@ -2,6 +2,7 @@ package com.flairmusicplayer.flair.ui.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -29,11 +30,9 @@ import butterknife.ButterKnife;
 public class PlaylistFragment extends MusicServiceFragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Playlist>> {
 
+    private static final int LOADER_ID = 4;
     @BindView(R.id.recycler_view)
     FastScrollRecyclerView recyclerView;
-
-    private static final int LOADER_ID = 4;
-    private ArrayList<Playlist> playlists;
     private PlaylistAdapter playlistAdapter;
 
     public PlaylistFragment() {
@@ -42,8 +41,7 @@ public class PlaylistFragment extends MusicServiceFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        playlists = new ArrayList<>();
-        playlistAdapter = new PlaylistAdapter((AppCompatActivity) getActivity(), playlists);
+        playlistAdapter = new PlaylistAdapter((AppCompatActivity) getActivity(), new ArrayList<Playlist>());
     }
 
     @Override
@@ -54,7 +52,7 @@ public class PlaylistFragment extends MusicServiceFragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_recycler_view, container, false);
         ButterKnife.bind(this, rootView);
         return rootView;
@@ -80,12 +78,13 @@ public class PlaylistFragment extends MusicServiceFragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Playlist>> loader, ArrayList<Playlist> data) {
-        playlists = data;
-        playlistAdapter.setData(playlists);
+        if (playlistAdapter != null)
+            playlistAdapter.setData(data);
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Playlist>> loader) {
-        playlistAdapter.setData(new ArrayList<Playlist>());
+        if (playlistAdapter != null)
+            playlistAdapter.setData(new ArrayList<Playlist>());
     }
 }

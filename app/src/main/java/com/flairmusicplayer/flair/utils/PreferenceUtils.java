@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.io.File;
+
 /**
  * Author: PulakDebasish
  */
@@ -13,6 +15,8 @@ public class PreferenceUtils {
     private static final String ACTIVE_FRAGMENT = "active_fragment";
 
     private static final String RECENTLY_ADDED_CUTOFF = "recently_added_cutoff";
+
+    private static final String LAST_FOLDER = "last_folder";
 
     private static PreferenceUtils instance;
 
@@ -43,6 +47,10 @@ public class PreferenceUtils {
 
     public long getRecentlyAddedCutoff() {
         return preferences.getLong(RECENTLY_ADDED_CUTOFF, 0L);
+    }
+
+    public File getLastOpenedDirectory() {
+        return new File(preferences.getString(LAST_FOLDER, FileUtils.getDefaultStartDirectoryPath()));
     }
 
 }

@@ -11,7 +11,9 @@ import android.text.TextUtils;
 
 import com.flairmusicplayer.flair.models.Song;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Coded by PulakDebasish on 26-05-2017.
@@ -83,6 +85,29 @@ public class SongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> {
         final String artistName = musicCursor.getString(7);
 
         return new Song(id, title, duration, trackNumber, albumId, albumName, artistId, artistName);
+    }
+
+    public static Song getSongFromPath(Context context, String songPath) {
+
+        String selection = MediaStore.Audio.Media.DATA;
+        String[] selectionArgs = {songPath};
+
+        Cursor cursor = createSongCursor(context, selection + "=?", selectionArgs);
+
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            Song song = getSongFromCursor(cursor);
+            cursor.close();
+            return song;
+        }
+        return new Song();
+    }
+
+    public static ArrayList<Song> getSongsForFiles(Context context, @NonNull List<File> files) {
+        ArrayList<Song> songs = new ArrayList<>();
+        for (File file : files) {
+            songs.add(getSongFromPath(context, file.getAbsolutePath()));
+        }
+        return songs;
     }
 
     @Override

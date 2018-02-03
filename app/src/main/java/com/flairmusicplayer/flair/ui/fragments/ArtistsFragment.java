@@ -1,6 +1,7 @@
 package com.flairmusicplayer.flair.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
+import butterknife.Unbinder;
 
 /**
  * Author: PulakDebasish
@@ -33,8 +34,8 @@ public class ArtistsFragment extends MusicServiceFragment
     @BindView(R.id.recycler_view)
     FastScrollRecyclerView artistListView;
 
-    ArrayList<Artist> artists;
-    ArtistAdapter artistAdapter;
+    private ArtistAdapter artistAdapter;
+    private Unbinder unbinder;
 
     public ArtistsFragment() {
     }
@@ -42,20 +43,31 @@ public class ArtistsFragment extends MusicServiceFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        artists = new ArrayList<>();
-        artistAdapter = new ArtistAdapter(artists);
+        artistAdapter = new ArtistAdapter(new ArrayList<Artist>());
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_recycler_view, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
+
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
         artistListView.setLayoutManager(layoutManager);
         artistListView.setAdapter(artistAdapter);
-        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
@@ -71,13 +83,13 @@ public class ArtistsFragment extends MusicServiceFragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Artist>> loader, ArrayList<Artist> data) {
-        artists = data;
-        Timber.d("Received data size: " + String.valueOf(data.size()));
-        artistAdapter.setData(artists);
+        if (artistAdapter != null)
+            artistAdapter.setData(data);
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Artist>> loader) {
-        artistAdapter.setData(new ArrayList<Artist>());
+        if (artistAdapter != null)
+            artistAdapter.setData(new ArrayList<Artist>());
     }
 }

@@ -19,5 +19,6 @@
     <string name="recently_played">Recently Played</string>
     <string name="recently_added">Recently Added</string>
     <string name="no_songs_in_playlist">No songs yet</string>
+    <string name="no_files">No files</string>
 
 </resources>

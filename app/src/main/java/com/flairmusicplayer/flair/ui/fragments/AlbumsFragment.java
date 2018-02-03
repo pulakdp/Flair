@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Author: PulakDebasish
@@ -32,8 +33,8 @@ public class AlbumsFragment extends MusicServiceFragment
     @BindView(R.id.recycler_view)
     FastScrollRecyclerView albumGridView;
 
-    private ArrayList<Album> albums;
     private AlbumAdapter albumAdapter;
+    private Unbinder unbinder;
 
     public AlbumsFragment() {
 
@@ -42,8 +43,7 @@ public class AlbumsFragment extends MusicServiceFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        albums = new ArrayList<>();
-        albumAdapter = new AlbumAdapter(albums);
+        albumAdapter = new AlbumAdapter(new ArrayList<Album>());
     }
 
     @Override
@@ -56,14 +56,24 @@ public class AlbumsFragment extends MusicServiceFragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_recycler_view, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
         albumGridView.setLayoutManager(layoutManager);
         albumGridView.setAdapter(albumAdapter);
+    }
 
-        return rootView;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
@@ -73,12 +83,13 @@ public class AlbumsFragment extends MusicServiceFragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Album>> loader, ArrayList<Album> data) {
-        albums = data;
-        albumAdapter.setData(albums);
+        if (albumAdapter != null)
+            albumAdapter.setData(data);
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Album>> loader) {
-        albumAdapter.setData(new ArrayList<Album>());
+        if (albumAdapter != null)
+            albumAdapter.setData(new ArrayList<Album>());
     }
 }
