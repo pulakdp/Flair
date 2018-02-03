@@ -72,16 +72,22 @@ public class SongsFragment extends MusicServiceFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final FragmentManager fm = getFragmentManager();
-        final LibraryFragment fragment = (LibraryFragment) fm.findFragmentByTag(MainActivity.LIBRARY_FRAGMENT);
+        LibraryFragment libFragment = null;
+        if (fm != null) {
+            libFragment = (LibraryFragment) fm.findFragmentByTag(MainActivity.LIBRARY_FRAGMENT);
+        }
+        final LibraryFragment fragment = libFragment;
         songList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) {
-                    fragment.hideFab();
-                } else if (dy < 0) {
-                    fragment.showFab();
-                } else {
-                    fragment.showFab();
+                if (fragment != null) {
+                    if (dy > 0) {
+                        fragment.hideFab();
+                    } else if (dy < 0) {
+                        fragment.showFab();
+                    } else {
+                        fragment.showFab();
+                    }
                 }
             }
         });

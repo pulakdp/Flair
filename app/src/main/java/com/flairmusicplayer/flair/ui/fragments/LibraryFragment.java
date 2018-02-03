@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,15 +63,21 @@ public class LibraryFragment extends MusicServiceFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).addDrawerToggle(toolbar);
 
-        setupViewPager(tabPager);
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar);
+            activity.addDrawerToggle(toolbar);
+        }
+
+        if (tabPager != null) {
+            setupViewPager(tabPager);
+            tabPager.setOffscreenPageLimit(2);
+            tabPager.setCurrentItem(0);
+            tabPager.addOnPageChangeListener(this);
+        }
 
         tabLayout.setupWithViewPager(tabPager);
-
-        tabPager.setCurrentItem(0);
-        tabPager.addOnPageChangeListener(this);
 
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +114,7 @@ public class LibraryFragment extends MusicServiceFragment
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        TabViewPagerAdapter tabViewPagerAdapter = new TabViewPagerAdapter(getActivity().getSupportFragmentManager());
+        TabViewPagerAdapter tabViewPagerAdapter = new TabViewPagerAdapter(getChildFragmentManager());
         tabViewPagerAdapter.addFragment(new SongsFragment(), getString(R.string.tab_songs));
         tabViewPagerAdapter.addFragment(new AlbumsFragment(), getString(R.string.tab_albums));
         tabViewPagerAdapter.addFragment(new ArtistsFragment(), getString(R.string.tab_artists));
