@@ -71,7 +71,7 @@ public class SongsFragment extends MusicServiceFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final FragmentManager fm = getFragmentManager();
+        final FragmentManager fm = getActivity() != null ? getActivity().getSupportFragmentManager() : null;
         LibraryFragment libFragment = null;
         if (fm != null) {
             libFragment = (LibraryFragment) fm.findFragmentByTag(MainActivity.LIBRARY_FRAGMENT);

@@ -13,8 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
+import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.fragments.FoldersFragment;
 import com.flairmusicplayer.flair.ui.fragments.LibraryFragment;
@@ -39,10 +44,14 @@ public class MainActivity extends SlidingPanelActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    private HeaderViewHolder headerViewHolder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+
+        headerViewHolder = new HeaderViewHolder(navigationView.getHeaderView(0));
 
         if (savedInstanceState == null)
             setActiveFragment(PreferenceUtils.getInstance(this).getLastActiveFragment());
@@ -149,7 +158,21 @@ public class MainActivity extends SlidingPanelActivity
     public void onMetaChanged() {
         super.onMetaChanged();
         if (!FlairMusicController.getPlayingQueue().isEmpty()) {
+            setSongDetailsInNavHeader();
             hideBottomBar(false);
+        }
+    }
+
+    private void setSongDetailsInNavHeader() {
+        Song currentSong = FlairMusicController.getCurrentSong();
+        if (currentSong != null) {
+            headerViewHolder.songTitleHeader.setText(currentSong.getTitle());
+            headerViewHolder.songArtistHeader.setText(currentSong.getArtistName());
+            Glide.with(this)
+                    .load(Song.getAlbumArtUri(currentSong.getAlbumId()))
+                    .apply(new RequestOptions().placeholder(R.drawable.album_art_placeholder))
+                    .apply(new RequestOptions().error(R.drawable.album_art_placeholder))
+                    .into(headerViewHolder.albumArtHeader);
         }
     }
 
@@ -157,5 +180,20 @@ public class MainActivity extends SlidingPanelActivity
     public void onQueueChanged() {
         super.onQueueChanged();
         hideBottomBar(FlairMusicController.getPlayingQueue().isEmpty());
+    }
+
+    public static class HeaderViewHolder {
+        @BindView(R.id.album_art_header)
+        ImageView albumArtHeader;
+
+        @BindView(R.id.song_title_header)
+        TextView songTitleHeader;
+
+        @BindView(R.id.song_artist_header)
+        TextView songArtistHeader;
+
+        public HeaderViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 }
