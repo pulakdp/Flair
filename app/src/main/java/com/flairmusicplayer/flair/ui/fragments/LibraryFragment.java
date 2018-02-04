@@ -71,13 +71,12 @@ public class LibraryFragment extends MusicServiceFragment
         }
 
         if (tabPager != null) {
+            tabLayout.setupWithViewPager(tabPager);
+
             setupViewPager(tabPager);
             tabPager.setOffscreenPageLimit(2);
-            tabPager.setCurrentItem(0);
             tabPager.addOnPageChangeListener(this);
         }
-
-        tabLayout.setupWithViewPager(tabPager);
 
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override

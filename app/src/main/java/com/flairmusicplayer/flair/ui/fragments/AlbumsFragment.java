@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 /**
  * Author: PulakDebasish
@@ -83,6 +84,7 @@ public class AlbumsFragment extends MusicServiceFragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Album>> loader, ArrayList<Album> data) {
+        Timber.d("Album size: %d", data.size());
         if (albumAdapter != null)
             albumAdapter.setData(data);
     }
