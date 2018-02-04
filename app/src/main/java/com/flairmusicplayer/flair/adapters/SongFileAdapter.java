@@ -2,7 +2,7 @@ package com.flairmusicplayer.flair.adapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +20,10 @@ import com.flairmusicplayer.flair.utils.FlairUtils;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Author: PulakDebasish
@@ -31,30 +34,23 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
     private AppCompatActivity activity;
     private FileSelectedListener listener;
 
-    private List<File> files;
-    private ArrayList<Song> songs;
+    private List<File> files = new LinkedList<>();
+    private ArrayList<Song> songs = new ArrayList<>();
 
     public SongFileAdapter(AppCompatActivity activity, List<File> files, FileSelectedListener listener) {
         this.activity = activity;
-        this.files = files;
         this.listener = listener;
-        songs = new ArrayList<>();
+        listSongsAsync(files);
     }
 
     @SuppressWarnings("unchecked")
-    private void listSongs() {
-        new ListSongsAsyncTask(activity, new ListSongsAsyncTask.OnSongsListedCallback() {
-            @Override
-            public void onSongsListed(@NonNull ArrayList<Song> list) {
-                songs = list;
-            }
-        }).execute(this.files);
+    private void listSongsAsync(List<File> files) {
+        new ListSongsAsyncTask(activity).execute(files);
     }
 
     public void setData(List<File> files) {
-        this.files = files;
-        listSongs();
-        notifyDataSetChanged();
+        Timber.d("No. of files = %d", files.size());
+        listSongsAsync(files);
     }
 
     @Override
@@ -108,37 +104,41 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
         void onFileSelected(File file);
     }
 
-    public static class ListSongsAsyncTask extends AsyncTask<List<File>, Void, ArrayList<Song>> {
+    public class ListSongsAsyncTask extends AsyncTask<List<File>, Void, ArrayList<Song>> {
 
         private WeakReference<Context> contextWeakReference;
-        private WeakReference<OnSongsListedCallback> callbackWeakReference;
+        private List<File> filelist = new LinkedList<>();
 
-        private ListSongsAsyncTask(Context context, OnSongsListedCallback onSongsListedCallback) {
+        private ListSongsAsyncTask(Context context) {
             contextWeakReference = new WeakReference<>(context);
-            callbackWeakReference = new WeakReference<>(onSongsListedCallback);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             checkContextReference();
-            checkCallbackReference();
+            files.clear();
+            songs.clear();
+            notifyDataSetChanged();
         }
 
         @Override
         protected ArrayList<Song> doInBackground(List<File>... params) {
-            if (checkContextReference() != null)
+            Timber.d("No. of files in async: %d", params[0].size());
+            filelist = params[0];
+            if (checkContextReference() != null) {
+                Timber.d("Performing task");
                 return SongLoader.getSongsForFiles(contextWeakReference.get(), params[0]);
-            else
-                return null;
+            } else
+                return new ArrayList<>();
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Song> songs) {
-            super.onPostExecute(songs);
-            OnSongsListedCallback callback = checkCallbackReference();
-            if (songs != null && callback != null && !songs.isEmpty())
-                callback.onSongsListed(songs);
+        protected void onPostExecute(ArrayList<Song> songList) {
+            super.onPostExecute(songList);
+            files.addAll(filelist);
+            songs.addAll(songList);
+            notifyDataSetChanged();
         }
 
         private Context checkContextReference() {
@@ -147,18 +147,6 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
                 cancel(false);
             }
             return context;
-        }
-
-        private OnSongsListedCallback checkCallbackReference() {
-            OnSongsListedCallback callback = callbackWeakReference.get();
-            if (callback == null) {
-                cancel(false);
-            }
-            return callback;
-        }
-
-        public interface OnSongsListedCallback {
-            void onSongsListed(@NonNull ArrayList<Song> songs);
         }
     }
 
@@ -171,35 +159,34 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
 
         @Override
         public void onClick(View view) {
+            Timber.d("onClick at %d", getAdapterPosition());
             final File file = files.get(getAdapterPosition());
             if (file.isDirectory()) {
                 listener.onFileSelected(files.get(getAdapterPosition()));
             } else if (file.isFile()) {
-                FlairMusicController.openQueue(songs, getAdapterPosition(), true);
-//                final Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        int current = -1;
-//                        long songId = SongLoader.getSongFromPath(activity,
-//                                file.getAbsolutePath()).getId();
-//
-//                        ArrayList<Song> songList = new ArrayList<>(songs.size());
-//                        int j = 0;
-//                        for (int i = 0; i < getItemCount(); i++) {
-//                            if (songs.get(i).getId() != -1) {
-//                                songList.add(songs.get(i));
-//                                if (songs.get(i).getId() == songId) {
-//                                    current = j;
-//                                }
-//                                j++;
-//                            }
-//                        }
-//                        FlairMusicController.openQueue(songList, current, true);
-//
-//
-//                    }
-//                }, 100);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int current = -1;
+                        long songId = SongLoader.getSongFromPath(activity,
+                                file.getAbsolutePath()).getId();
+
+                        Timber.d("Song id: %s", songId);
+
+                        int j = 0;
+                        for (int i = 0; i < songs.size(); i++) {
+                            if (songs.get(i).getId() != -1) {
+                                if (songs.get(i).getId() == songId) {
+                                    current = j;
+                                }
+                                j++;
+                            }
+                        }
+                        Timber.d("Values: List size = %d, Current pos = %d", songs.size(), current);
+                        FlairMusicController.openQueue(songs, current, true);
+                    }
+                }, 100);
             }
         }
     }

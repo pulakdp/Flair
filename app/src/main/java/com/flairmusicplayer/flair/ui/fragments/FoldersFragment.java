@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.flairmusicplayer.flair.R;
@@ -34,6 +35,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 /**
  * Author: PulakDebasish
@@ -59,6 +61,9 @@ public class FoldersFragment extends MusicServiceFragment
 
     @BindView(R.id.empty_text)
     TextView emptyText;
+
+    @BindView(R.id.folder_loading_bar)
+    ProgressBar progressBar;
 
     private Unbinder unbinder;
     private SongFileAdapter adapter;
@@ -136,27 +141,40 @@ public class FoldersFragment extends MusicServiceFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         setUpToolbar();
         setUpBreadCrumbs();
+        setUpAdapter();
         setUpRecyclerView();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
     private void setUpToolbar() {
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).addDrawerToggle(toolbar);
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar);
+            activity.addDrawerToggle(toolbar);
+        }
     }
 
     private void setUpBreadCrumbs() {
         breadCrumbLayout.setCallback(this);
     }
 
-    private void setUpRecyclerView() {
+    private void setUpAdapter() {
         adapter = new SongFileAdapter((AppCompatActivity) getActivity(), new LinkedList<File>(), this);
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
-                emptyText.setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
+                progressBar.setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
             }
         });
+    }
+
+    private void setUpRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL,
@@ -177,16 +195,11 @@ public class FoldersFragment extends MusicServiceFragment
 
     @Override
     public void onFileSelected(File file) {
+        Timber.d("File = %s", file.getPath());
         file = tryGetCanonicalFile(file);
+        Timber.d("File(Canonical) = %s", file.getPath());
         if (file.isDirectory()) {
             setCrumb(new BreadCrumbLayout.Crumb(file), true);
-        } else {
-            FileFilter fileFilter = new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return !pathname.isDirectory() && getFileFilter().accept(pathname);
-                }
-            };
         }
     }
 

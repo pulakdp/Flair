@@ -105,7 +105,8 @@ public class SongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> {
     public static ArrayList<Song> getSongsForFiles(Context context, @NonNull List<File> files) {
         ArrayList<Song> songs = new ArrayList<>();
         for (File file : files) {
-            songs.add(getSongFromPath(context, file.getAbsolutePath()));
+            if (!file.isDirectory())
+                songs.add(getSongFromPath(context, file.getAbsolutePath()));
         }
         return songs;
     }
