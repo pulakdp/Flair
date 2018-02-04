@@ -3,7 +3,7 @@
     <color name="colorPrimary">#673ab7</color>
     <color name="colorPrimaryDark">#512da8</color>
     <color name="colorAccent">#ffc400</color>
-    <color name="playbackControlBackground">#D9FFFFFF</color>
+    <color name="playbackControlScrimStartColor">#CCFFFFFF</color>
 
     <!-- Letter tile colors -->
     <color name="letter_tile_default_color">@color/grey</color>
@@ -62,5 +62,6 @@
     <color name="letter_tile_grey_color_dark">@color/grey_dark</color>
     <color name="letter_tile_deep_orange_color_dark">@color/orange_dark</color>
     <color name="letter_tile_brown_color_dark">@color/brown_dark</color>
+    <color name="toolbar_scrim_start_color">#80FFFFFF</color>
 
 </resources>

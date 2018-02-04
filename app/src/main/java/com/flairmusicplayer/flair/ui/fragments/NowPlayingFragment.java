@@ -1,21 +1,26 @@
 package com.flairmusicplayer.flair.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.adapters.AlbumArtPagerAdapter;
+import com.flairmusicplayer.flair.adapters.PlayingQueueAdapter;
 import com.flairmusicplayer.flair.customviews.RepeatButton;
 import com.flairmusicplayer.flair.customviews.ShuffleButton;
 import com.flairmusicplayer.flair.models.Song;
@@ -46,34 +51,45 @@ public class NowPlayingFragment extends MusicServiceFragment
 
     @BindView(R.id.current_time)
     TextView currentPlayTime;
-
+    public Runnable progressUpdater = new Runnable() {
+        @Override
+        public void run() {
+            if (FlairMusicController.isPlaying()) {
+                setProgress();
+                progressSeekBar.postDelayed(progressUpdater, 1000);
+                updateCurrentPlayTime(FlairMusicController.getSongProgress());
+            } else
+                progressSeekBar.removeCallbacks(this);
+        }
+    };
     @BindView(R.id.total_time)
     TextView totalPlayTime;
-
     @BindView(R.id.song_title)
     TextView songTitle;
-
     @BindView(R.id.song_artist)
     TextView songArtist;
-
     @BindView(R.id.play_pause_fab)
     FloatingActionButton playPauseFab;
-
     @BindView(R.id.player_repeat_button)
     RepeatButton repeatButton;
-
     @BindView(R.id.player_shuffle_button)
     ShuffleButton shuffleButton;
-
     @BindView(R.id.player_next_button)
     ImageButton nextButton;
-
     @BindView(R.id.player_prev_button)
     ImageButton previousButton;
-
     @BindView(R.id.player_album_art_viewpager)
     ViewPager pager;
-
+    @BindView(R.id.queue_toggle)
+    ImageButton queueToggle;
+    @BindView(R.id.scrim_layout)
+    FrameLayout scrimLayout;
+    @BindView(R.id.full_scrim)
+    View fullScrim;
+    @BindView(R.id.playing_queue_rv)
+    RecyclerView playingQueueList;
+    private PlayingQueueAdapter queueAdapter;
+    private LinearLayoutManager layoutManager;
     private ArrayList<Song> currentPlayingQueue = new ArrayList<>();
 
     public NowPlayingFragment() {
@@ -81,17 +97,9 @@ public class NowPlayingFragment extends MusicServiceFragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
         ButterKnife.bind(this, rootView);
-        previousButton.setOnClickListener(this);
-        playPauseFab.setOnClickListener(this);
-        nextButton.setOnClickListener(this);
-        progressSeekBar.setOnSeekBarChangeListener(this);
-        pager.addOnPageChangeListener(this);
-        currentPlayTime.setText("0:00");
-        totalPlayTime.setText("0:00");
-        setUpToolbar();
         return rootView;
     }
 
@@ -104,6 +112,16 @@ public class NowPlayingFragment extends MusicServiceFragment
                 view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+        previousButton.setOnClickListener(this);
+        playPauseFab.setOnClickListener(this);
+        nextButton.setOnClickListener(this);
+        queueToggle.setOnClickListener(this);
+        progressSeekBar.setOnSeekBarChangeListener(this);
+        pager.addOnPageChangeListener(this);
+        currentPlayTime.setText("0:00");
+        totalPlayTime.setText("0:00");
+        setUpToolbar();
+        setUpRecyclerView();
     }
 
     @Override
@@ -113,7 +131,7 @@ public class NowPlayingFragment extends MusicServiceFragment
         playPauseFab.setOnClickListener(null);
         nextButton.setOnClickListener(null);
         progressSeekBar.setOnSeekBarChangeListener(null);
-        pager.removeOnPageChangeListener(null);
+        pager.removeOnPageChangeListener(this);
     }
 
     private void setViews() {
@@ -145,6 +163,13 @@ public class NowPlayingFragment extends MusicServiceFragment
         }
     }
 
+    private void setUpRecyclerView() {
+        queueAdapter = new PlayingQueueAdapter(new ArrayList<Song>());
+        layoutManager = new LinearLayoutManager(getContext());
+        playingQueueList.setLayoutManager(layoutManager);
+        playingQueueList.setAdapter(queueAdapter);
+    }
+
     private void updateAlbumArtPager() {
         pager.setAdapter(new AlbumArtPagerAdapter(getFragmentManager(), FlairMusicController.getPlayingQueue()));
         pager.setCurrentItem(FlairMusicController.getPosition(), true);
@@ -155,6 +180,7 @@ public class NowPlayingFragment extends MusicServiceFragment
     public void onMetaChanged() {
         super.onMetaChanged();
         setViews();
+        updateQueue();
         if (pager.getAdapter() == null) {
             updateAlbumArtPager();
             repeatButton.updateRepeatState();
@@ -168,7 +194,6 @@ public class NowPlayingFragment extends MusicServiceFragment
         super.onPlayStateChanged();
         togglePlayPauseAndStartProgress(FlairMusicController.isPlaying());
     }
-
 
     @Override
     public void onRepeatModeChanged() {
@@ -185,8 +210,15 @@ public class NowPlayingFragment extends MusicServiceFragment
     @Override
     public void onQueueChanged() {
         super.onQueueChanged();
+        updateQueue();
         setViews();
         updateAlbumArtPager();
+    }
+
+    private void updateQueue() {
+        currentPlayingQueue = FlairMusicController.getPlayingQueue();
+        queueAdapter.setData(currentPlayingQueue);
+        layoutManager.scrollToPositionWithOffset(FlairMusicController.getPosition(), 0);
     }
 
     private void togglePlayPauseAndStartProgress(boolean isPlaying) {
@@ -210,6 +242,16 @@ public class NowPlayingFragment extends MusicServiceFragment
             case R.id.player_next_button:
                 FlairMusicController.playNextSong();
                 break;
+            case R.id.queue_toggle:
+                if (playingQueueList.getVisibility() == View.GONE) {
+                    playingQueueList.setVisibility(View.VISIBLE);
+                    scrimLayout.setVisibility(View.GONE);
+                    fullScrim.setVisibility(View.VISIBLE);
+                } else {
+                    playingQueueList.setVisibility(View.GONE);
+                    scrimLayout.setVisibility(View.VISIBLE);
+                    fullScrim.setVisibility(View.GONE);
+                }
         }
     }
 
@@ -229,18 +271,6 @@ public class NowPlayingFragment extends MusicServiceFragment
     public void updateCurrentPlayTime(int position) {
         currentPlayTime.setText(FlairUtils.formatTimeToString(position));
     }
-
-    public Runnable progressUpdater = new Runnable() {
-        @Override
-        public void run() {
-            if (FlairMusicController.isPlaying()) {
-                setProgress();
-                progressSeekBar.postDelayed(progressUpdater, 1000);
-                updateCurrentPlayTime(FlairMusicController.getSongProgress());
-            } else
-                progressSeekBar.removeCallbacks(this);
-        }
-    };
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

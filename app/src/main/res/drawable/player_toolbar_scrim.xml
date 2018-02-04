@@ -3,10 +3,9 @@
        android:shape="rectangle">
 
     <gradient
-        android:angle="90"
-        android:endColor="#00FFFFFF"
-        android:centerColor="@color/playbackControlBackground"
-        android:startColor="@color/playbackControlBackground"
+        android:angle="-90"
+        android:endColor="#00000000"
+        android:startColor="@color/toolbar_scrim_start_color"
         android:type="linear"/>
 
 </shape>

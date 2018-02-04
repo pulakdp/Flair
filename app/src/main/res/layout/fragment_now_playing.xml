@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,6 +11,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <FrameLayout
+        android:id="@+id/scrim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_scrim_height"
+            android:background="@drawable/player_toolbar_scrim"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/playback_control_scrim_height"
+            android:layout_gravity="bottom"
+            android:background="@drawable/player_control_scrim"/>
+
+    </FrameLayout>
+
+    <View
+        android:id="@+id/full_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CCFFFFFF"
+        android:visibility="gone"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -23,16 +46,12 @@
             android:background="@android:color/transparent"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-        <View
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+            android:id="@+id/playing_queue_rv"
             android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:background="@drawable/playback_controls_scrim_top"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_alignBottom="@id/controls_layout"
-            android:background="@drawable/playback_controls_scrim_bottom"/>
+            android:layout_height="match_parent"
+            android:layout_below="@id/player_toolbar"
+            android:layout_above="@id/controls_layout"/>
 
         <include
             layout="@layout/playback_controls_layout"
@@ -41,4 +60,5 @@
             android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
+
 </FrameLayout>
