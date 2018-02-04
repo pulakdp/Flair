@@ -27,14 +27,12 @@ import com.flairmusicplayer.flair.utils.PreferenceUtils;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 
 /**
@@ -44,7 +42,8 @@ import timber.log.Timber;
 public class FoldersFragment extends MusicServiceFragment
         implements BreadCrumbLayout.SelectionCallback,
         SongFileAdapter.FileSelectedListener,
-        LoaderManager.LoaderCallbacks<List<File>> {
+        LoaderManager.LoaderCallbacks<List<File>>,
+        SongFileAdapter.OnEmptyFolderCallback {
 
     private static final String PATH = "path";
     private static final String CRUMBS = "crumbs";
@@ -65,7 +64,6 @@ public class FoldersFragment extends MusicServiceFragment
     @BindView(R.id.folder_loading_bar)
     ProgressBar progressBar;
 
-    private Unbinder unbinder;
     private SongFileAdapter adapter;
 
     public FoldersFragment() {
@@ -83,21 +81,12 @@ public class FoldersFragment extends MusicServiceFragment
         return frag;
     }
 
-    private static File tryGetCanonicalFile(File file) {
-        try {
-            return file.getCanonicalFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return file;
-        }
-    }
-
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null) {
-            setCrumb(new BreadCrumbLayout.Crumb(tryGetCanonicalFile((File) getArguments().getSerializable(PATH))),
+            setCrumb(new BreadCrumbLayout.Crumb((File) getArguments().getSerializable(PATH)),
                     true);
         } else {
             breadCrumbLayout.restoreFromStateWrapper((BreadCrumbLayout.SavedStateWrapper)
@@ -115,10 +104,11 @@ public class FoldersFragment extends MusicServiceFragment
     public void setCrumb(BreadCrumbLayout.Crumb crumb, boolean addToHistory) {
         if (crumb == null) return;
         saveScrollPosition();
-        breadCrumbLayout.setActiveOrAdd(crumb, false);
+        breadCrumbLayout.setActiveOrAdd(crumb, true);
         if (addToHistory) {
             breadCrumbLayout.addHistory(crumb);
         }
+        emptyText.setVisibility(View.GONE);
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
@@ -133,7 +123,7 @@ public class FoldersFragment extends MusicServiceFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_folder, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -143,12 +133,6 @@ public class FoldersFragment extends MusicServiceFragment
         setUpBreadCrumbs();
         setUpAdapter();
         setUpRecyclerView();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 
     private void setUpToolbar() {
@@ -164,7 +148,9 @@ public class FoldersFragment extends MusicServiceFragment
     }
 
     private void setUpAdapter() {
-        adapter = new SongFileAdapter((AppCompatActivity) getActivity(), new LinkedList<File>(), this);
+        adapter = new SongFileAdapter((AppCompatActivity) getActivity(),
+                this,
+                this);
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -195,9 +181,6 @@ public class FoldersFragment extends MusicServiceFragment
 
     @Override
     public void onFileSelected(File file) {
-        Timber.d("File = %s", file.getPath());
-        file = tryGetCanonicalFile(file);
-        Timber.d("File(Canonical) = %s", file.getPath());
         if (file.isDirectory()) {
             setCrumb(new BreadCrumbLayout.Crumb(file), true);
         }
@@ -232,6 +215,13 @@ public class FoldersFragment extends MusicServiceFragment
     @Override
     public void onLoaderReset(Loader<List<File>> loader) {
         updateAdapter(new LinkedList<File>());
+    }
+
+    @Override
+    public void onEmptyFolder() {
+        Timber.d("onEmptyFolder called");
+        progressBar.setVisibility(View.GONE);
+        emptyText.setVisibility(View.VISIBLE);
     }
 
     private static class FileComparator implements Comparator<File> {

@@ -33,23 +33,29 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
 
     private AppCompatActivity activity;
     private FileSelectedListener listener;
+    private OnEmptyFolderCallback emptyFolderCallback;
+    private ListSongsAsyncTask listSongsAsyncTask;
 
     private List<File> files = new LinkedList<>();
     private ArrayList<Song> songs = new ArrayList<>();
 
-    public SongFileAdapter(AppCompatActivity activity, List<File> files, FileSelectedListener listener) {
+    public SongFileAdapter(AppCompatActivity activity,
+                           FileSelectedListener listener,
+                           OnEmptyFolderCallback emptyFolderCallback) {
         this.activity = activity;
         this.listener = listener;
-        listSongsAsync(files);
+        this.emptyFolderCallback = emptyFolderCallback;
     }
 
     @SuppressWarnings("unchecked")
     private void listSongsAsync(List<File> files) {
-        new ListSongsAsyncTask(activity).execute(files);
+        if (listSongsAsyncTask != null)
+            listSongsAsyncTask.cancel(true);
+        listSongsAsyncTask = new ListSongsAsyncTask(activity);
+        listSongsAsyncTask.execute(files);
     }
 
     public void setData(List<File> files) {
-        Timber.d("No. of files = %d", files.size());
         listSongsAsync(files);
     }
 
@@ -100,6 +106,10 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
         return file.getName();
     }
 
+    public interface OnEmptyFolderCallback {
+        void onEmptyFolder();
+    }
+
     public interface FileSelectedListener {
         void onFileSelected(File file);
     }
@@ -107,7 +117,7 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
     public class ListSongsAsyncTask extends AsyncTask<List<File>, Void, ArrayList<Song>> {
 
         private WeakReference<Context> contextWeakReference;
-        private List<File> filelist = new LinkedList<>();
+        private List<File> fileList = new LinkedList<>();
 
         private ListSongsAsyncTask(Context context) {
             contextWeakReference = new WeakReference<>(context);
@@ -124,11 +134,13 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
 
         @Override
         protected ArrayList<Song> doInBackground(List<File>... params) {
-            Timber.d("No. of files in async: %d", params[0].size());
-            filelist = params[0];
+            fileList = params[0];
             if (checkContextReference() != null) {
-                Timber.d("Performing task");
-                return SongLoader.getSongsForFiles(contextWeakReference.get(), params[0]);
+                ArrayList<Song> songList = SongLoader.getSongsForFiles(contextWeakReference.get(), params[0]);
+                if (!isCancelled())
+                    return songList;
+                else
+                    return new ArrayList<>();
             } else
                 return new ArrayList<>();
         }
@@ -136,9 +148,19 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
         @Override
         protected void onPostExecute(ArrayList<Song> songList) {
             super.onPostExecute(songList);
-            files.addAll(filelist);
+            if (isCancelled())
+                return;
+            files.addAll(fileList);
             songs.addAll(songList);
             notifyDataSetChanged();
+            if (files.isEmpty() && songs.isEmpty()) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        emptyFolderCallback.onEmptyFolder();
+                    }
+                }, 100);
+            }
         }
 
         private Context checkContextReference() {
