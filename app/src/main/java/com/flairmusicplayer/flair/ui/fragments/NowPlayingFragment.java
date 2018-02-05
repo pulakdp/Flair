@@ -25,6 +25,7 @@ import com.flairmusicplayer.flair.customviews.RepeatButton;
 import com.flairmusicplayer.flair.customviews.ShuffleButton;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
+import com.flairmusicplayer.flair.ui.activities.MainActivity;
 import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
 
@@ -243,16 +244,32 @@ public class NowPlayingFragment extends MusicServiceFragment
                 FlairMusicController.playNextSong();
                 break;
             case R.id.queue_toggle:
-                if (playingQueueList.getVisibility() == View.GONE) {
-                    playingQueueList.setVisibility(View.VISIBLE);
-                    scrimLayout.setVisibility(View.GONE);
-                    fullScrim.setVisibility(View.VISIBLE);
-                } else {
-                    playingQueueList.setVisibility(View.GONE);
-                    scrimLayout.setVisibility(View.VISIBLE);
-                    fullScrim.setVisibility(View.GONE);
-                }
+                if (playingQueueList.getVisibility() == View.GONE)
+                    showQueue();
+                else
+                    hideQueue();
+
         }
+    }
+
+    private void showQueue() {
+        playingQueueList.setVisibility(View.VISIBLE);
+        scrimLayout.setVisibility(View.GONE);
+        fullScrim.setVisibility(View.VISIBLE);
+        enablePanelTouchEvent(false);
+    }
+
+    private void hideQueue() {
+        playingQueueList.setVisibility(View.GONE);
+        scrimLayout.setVisibility(View.VISIBLE);
+        fullScrim.setVisibility(View.GONE);
+        enablePanelTouchEvent(true);
+    }
+
+    private void enablePanelTouchEvent(boolean touchEvent) {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null)
+            activity.setPanelTouchEnabled(touchEvent);
     }
 
     public void setProgress() {
