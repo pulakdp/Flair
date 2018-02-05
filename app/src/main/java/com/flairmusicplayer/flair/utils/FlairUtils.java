@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -23,6 +24,14 @@ public class FlairUtils {
 
     private static TypedArray colors;
     private static int defaultColor;
+
+    public static boolean isOreo() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
+    public static boolean isLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
 
     public static String formatTimeToString(int timeInMillis) {
         int timeInSeconds = timeInMillis / 1000;

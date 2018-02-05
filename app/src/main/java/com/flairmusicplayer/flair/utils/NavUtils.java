@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.services.FlairMusicController;
+import com.flairmusicplayer.flair.services.FlairMusicService;
+import com.flairmusicplayer.flair.ui.activities.MainActivity;
 import com.flairmusicplayer.flair.ui.activities.PlaylistDetailActivity;
 
 /**
@@ -39,4 +41,9 @@ public class NavUtils {
         activity.startActivity(intent);
     }
 
+    public static Intent getNowPlayingIntent(FlairMusicService flairMusicService) {
+        Intent action = new Intent(flairMusicService, MainActivity.class);
+        action.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return action;
+    }
 }

@@ -1,15 +1,22 @@
 package com.flairmusicplayer.flair.services;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -19,18 +26,27 @@ import android.os.PowerManager;
 import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v7.graphics.Palette;
+import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.providers.FlairPlaybackState;
 import com.flairmusicplayer.flair.providers.RecentStore;
 import com.flairmusicplayer.flair.providers.SongPlayCount;
+import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
+import com.flairmusicplayer.flair.utils.NavUtils;
 import com.flairmusicplayer.flair.utils.Stopwatch;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import timber.log.Timber;
 
@@ -59,6 +75,9 @@ public class FlairMusicService extends Service {
     public static final String ACTION_NEXT = FLAIR_PACKAGE_NAME + ".next";
     public static final String ACTION_PREVIOUS = FLAIR_PACKAGE_NAME + ".previous";
 
+    public static final int NOTIFICATION_ID = 1;
+    public static final String NOTIFICATION_CHANNEL_ID = "flair_playing_notification";
+
     public static final int SHUFFLE_MODE_NONE = 0;
     public static final int SHUFFLE_MODE_SHUFFLE = 1;
 
@@ -70,19 +89,27 @@ public class FlairMusicService extends Service {
     public static final int SET_POSITION = 5;
     public static final int SAVE_QUEUES = 6;
     public static final int RESTORE_QUEUES = 7;
-    private static final int FOCUS_CHANGE = 8;
-
     public static final int TRACK_ENDED = 1;
     public static final int TRACK_WENT_TO_NEXT = 2;
-
     public static final String SAVED_POSITION = "POSITION";
     public static final String SAVED_SONG_PROGRESS = "POSITION_IN_TRACK";
     public static final String SAVED_SHUFFLE_MODE = "SHUFFLE_MODE";
     public static final String SAVED_REPEAT_MODE = "REPEAT_MODE";
+    private static final int FOCUS_CHANGE = 8;
+    private static final int NOTIFY_MODE_FOREGROUND = 1;
+    private static final int NOTIFY_MODE_BACKGROUND = 2;
 
     private static final int IDLE_DELAY = 5 * 60 * 1000;
     private static final long REWIND_INSTEAD_PREVIOUS_THRESHOLD = 2000;
 
+    private final IBinder musicBinder = new FlairMusicBinder();
+
+    private final BroadcastReceiver widgetIntentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            handleIntent(intent);
+        }
+    };
     private ArrayList<Song> playingQueue = new ArrayList<>();
     private ArrayList<Song> originalPlayingQueue = new ArrayList<>();
     private AudioManager audioManager;
@@ -90,7 +117,26 @@ public class FlairMusicService extends Service {
     private PowerManager.WakeLock wakeLock;
     private HandlerThread musicPlayerHandlerThread;
     private MusicHandler musicHandler;
+    private final AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void onAudioFocusChange(final int focusChange) {
+            musicHandler.obtainMessage(FOCUS_CHANGE, focusChange, 0).sendToTarget();
+        }
+    };
+    private Handler uiThreadHandler;
     private MultiPlayer player;
+    private final BroadcastReceiver becomingNoisyReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                pause();
+            }
+        }
+    };
+    private NotificationManager notificationManager;
     private IntentFilter becomingNoisyReceiverIntentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
     private SongPlayCountHelper songPlayCountHelper = new SongPlayCountHelper();
 
@@ -100,11 +146,10 @@ public class FlairMusicService extends Service {
     private int shuffleMode;
     private int repeatMode;
     private boolean queuesRestored;
+    private int notifyMode = NOTIFY_MODE_BACKGROUND;
     private boolean pausedByTransientLossOfFocus;
     private boolean notHandledMetaChangedForCurrentTrack;
     private boolean becomingNoisyReceiverRegistered = false;
-
-    private final IBinder musicBinder = new FlairMusicBinder();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -136,12 +181,29 @@ public class FlairMusicService extends Service {
 
         setupMediaSession();
 
+        uiThreadHandler = new Handler();
+
+        initNotification();
+
         player = new MultiPlayer(this, this);
         player.setHandler(musicHandler);
 
         restoreState();
 
         mediaSession.setActive(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (becomingNoisyReceiverRegistered) {
+            unregisterReceiver(becomingNoisyReceiver);
+            becomingNoisyReceiverRegistered = false;
+        }
+        mediaSession.setActive(false);
+        cancelNotification();
+        player.release();
+        mediaSession.release();
     }
 
     @Override
@@ -165,33 +227,6 @@ public class FlairMusicService extends Service {
                         play();
                         break;
                     case ACTION_PLAY_PLAYLIST:
-//                        Playlist playlist = intent.getParcelableExtra(INTENT_EXTRA_PLAYLIST);
-//                        int shuffleMode = intent.getIntExtra(INTENT_EXTRA_SHUFFLE_MODE, getShuffleMode());
-//                        if (playlist != null) {
-//                            ArrayList<Song> playlistSongs;
-//                            if (playlist instanceof AbsCustomPlaylist) {
-//                                playlistSongs = ((AbsCustomPlaylist) playlist).getSongs(getApplicationContext());
-//                            } else {
-//                                //noinspection unchecked
-//                                playlistSongs = (ArrayList<Song>) (List) PlaylistSongLoader.getPlaylistSongList(getApplicationContext(), playlist.id);
-//                            }
-//                            if (!playlistSongs.isEmpty()) {
-//                                if (shuffleMode == SHUFFLE_MODE_SHUFFLE) {
-//                                    int startPosition = 0;
-//                                    if (!playlistSongs.isEmpty()) {
-//                                        startPosition = new Random().nextInt(playlistSongs.size());
-//                                    }
-//                                    openQueue(playlistSongs, startPosition, true);
-//                                    setShuffleMode(shuffleMode);
-//                                } else {
-//                                    openQueue(playlistSongs, 0, true);
-//                                }
-//                            } else {
-//                                Toast.makeText(getApplicationContext(), R.string.playlist_is_empty, Toast.LENGTH_LONG).show();
-//                            }
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), R.string.playlist_is_empty, Toast.LENGTH_LONG).show();
-//                        }
                         break;
                     case ACTION_PREVIOUS:
                         playPreviousSong(true);
@@ -332,6 +367,7 @@ public class FlairMusicService extends Service {
     public void handleChangeInternal(final String what) {
         switch (what) {
             case META_CHANGED:
+                updateNotification();
                 savePosition();
                 saveSongProgress();
                 RecentStore.getInstance(this).addSongId(getCurrentSong().getId());
@@ -341,6 +377,7 @@ public class FlairMusicService extends Service {
                 songPlayCountHelper.notifySongChanged(getCurrentSong());
                 break;
             case PLAY_STATE_CHANGED:
+                updateNotification();
                 final boolean isPlaying = isPlaying();
                 if (!isPlaying && getSongProgress() > 0) {
                     saveSongProgress();
@@ -351,6 +388,8 @@ public class FlairMusicService extends Service {
                 saveState();
                 if (playingQueue.size() > 0) {
                     prepareNext();
+                } else {
+                    cancelNotification();
                 }
                 break;
         }
@@ -380,10 +419,6 @@ public class FlairMusicService extends Service {
         return repeatMode;
     }
 
-    public int getShuffleMode() {
-        return shuffleMode;
-    }
-
     public void setRepeatMode(int repeatMode) {
         this.repeatMode = repeatMode;
         prepareNext();
@@ -392,6 +427,10 @@ public class FlairMusicService extends Service {
                 .apply();
         prepareNext();
         handleAndSendChangeInternal(REPEAT_MODE_CHANGED);
+    }
+
+    public int getShuffleMode() {
+        return shuffleMode;
     }
 
     public void setShuffleMode(int shuffleMode) {
@@ -508,6 +547,7 @@ public class FlairMusicService extends Service {
 
     private void stop() {
         pause();
+        cancelNotification();
         pausedByTransientLossOfFocus = false;
         seek(0);
         releaseServiceUiAndStop();
@@ -710,6 +750,118 @@ public class FlairMusicService extends Service {
         return player.getAudioSessionId();
     }
 
+    private Notification buildNotification() {
+        final Song currentSong = getCurrentSong();
+        final String albumName = currentSong.getAlbumName();
+        final String artistName = currentSong.getArtistName();
+        final boolean isPlaying = isPlaying();
+        String text = TextUtils.isEmpty(albumName)
+                ? artistName : artistName + " \u2022 " + albumName;
+
+        int playButtonResId = isPlaying
+                ? R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp;
+
+        Intent nowPlayingIntent = NavUtils.getNowPlayingIntent(this);
+        PendingIntent clickIntent = PendingIntent.getActivity(this, 0, nowPlayingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Bitmap artwork = null;
+        try {
+            artwork = Glide.with(getApplicationContext())
+                    .asBitmap()
+                    .load(Song.getAlbumArtUri(currentSong.getAlbumId()))
+                    .into(500, 500)
+                    .get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setLargeIcon(artwork)
+                .setContentIntent(clickIntent)
+                .setContentTitle(currentSong.getTitle())
+                .setContentText(text)
+                .addAction(R.drawable.ic_skip_previous_black_24dp,
+                        "",
+                        retrievePlaybackAction(ACTION_PREVIOUS))
+                .addAction(playButtonResId, "",
+                        retrievePlaybackAction(ACTION_TOGGLE_PAUSE))
+                .addAction(R.drawable.ic_skip_next_black_24dp,
+                        "",
+                        retrievePlaybackAction(ACTION_NEXT));
+
+        if (FlairUtils.isLollipop()) {
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            android.support.v4.media.app.NotificationCompat.MediaStyle style = new android.support.v4.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.getSessionToken())
+                    .setShowActionsInCompactView(0, 1, 2, 3);
+            builder.setStyle(style);
+        }
+        if (artwork != null && FlairUtils.isLollipop())
+            builder.setColor(Palette.from(artwork).generate().getVibrantColor(Color.parseColor("#403f4d")));
+
+        if (FlairUtils.isOreo())
+            builder.setColorized(true);
+
+        return builder.build();
+    }
+
+    private void initNotification() {
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (FlairUtils.isOreo())
+            createNotificationChannel();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationChannel() {
+        NotificationChannel notificationChannel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID);
+        if (notificationChannel == null) {
+            notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.playing_notification),
+                    NotificationManager.IMPORTANCE_LOW);
+            notificationChannel.enableLights(false);
+            notificationChannel.enableVibration(false);
+            notificationChannel.setShowBadge(false);
+
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+    }
+
+    private void updateNotification() {
+        int newNotifyMode;
+        if (isPlaying()) {
+            newNotifyMode = NOTIFY_MODE_FOREGROUND;
+        } else {
+            newNotifyMode = NOTIFY_MODE_BACKGROUND;
+        }
+
+        if (notifyMode != newNotifyMode && newNotifyMode == NOTIFY_MODE_BACKGROUND) {
+            stopForeground(false);
+        }
+
+        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
+            startForeground(NOTIFICATION_ID, buildNotification());
+        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
+            notificationManager.notify(NOTIFICATION_ID, buildNotification());
+        }
+
+        notifyMode = newNotifyMode;
+    }
+
+    private void cancelNotification() {
+        stopForeground(true);
+        notificationManager.cancel(NOTIFICATION_ID);
+        notifyMode = NOTIFY_MODE_BACKGROUND;
+    }
+
+    private PendingIntent retrievePlaybackAction(final String action) {
+        final ComponentName serviceName = new ComponentName(this, FlairMusicService.class);
+        Intent intent = new Intent(action);
+        intent.setComponent(serviceName);
+
+        return PendingIntent.getService(this, 0, intent, 0);
+    }
+
     /**
      * Handle broadcast intents from widgets
      */
@@ -875,16 +1027,16 @@ public class FlairMusicService extends Service {
             currentMediaPlayer.setVolume(vol, vol);
         }
 
+        public int getAudioSessionId() {
+            return currentMediaPlayer.getAudioSessionId();
+        }
+
         public void setAudioSessionId(final int sessionId) {
             try {
                 currentMediaPlayer.setAudioSessionId(sessionId);
             } catch (Exception e) {
                 Timber.e("Couldn't set audio session id. Message: %s", e.getMessage());
             }
-        }
-
-        public int getAudioSessionId() {
-            return currentMediaPlayer.getAudioSessionId();
         }
 
         @Override
@@ -915,32 +1067,6 @@ public class FlairMusicService extends Service {
             return false;
         }
     }
-
-    private final BroadcastReceiver widgetIntentReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            handleIntent(intent);
-        }
-    };
-
-    private final BroadcastReceiver becomingNoisyReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-                pause();
-            }
-        }
-    };
-
-    private final AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void onAudioFocusChange(final int focusChange) {
-            musicHandler.obtainMessage(FOCUS_CHANGE, focusChange, 0).sendToTarget();
-        }
-    };
 
     private static final class MusicHandler extends Handler {
         WeakReference<FlairMusicService> service;
@@ -1023,20 +1149,13 @@ public class FlairMusicService extends Service {
         }
     }
 
-    public class FlairMusicBinder extends Binder {
-        public FlairMusicService getService() {
-            return FlairMusicService.this;
-        }
-    }
-
     /**
      * Helper code borrowed from Phonograph with little modification
      */
 
     private static class SongPlayCountHelper {
-        public static final String TAG = SongPlayCountHelper.class.getSimpleName();
 
-        private Stopwatch watch = new Stopwatch();
+        private Stopwatch stopwatch = new Stopwatch();
         private Song song = new Song();
 
         public Song getSong() {
@@ -1044,12 +1163,12 @@ public class FlairMusicService extends Service {
         }
 
         boolean shouldBumpPlayCount() {
-            return song.getDuration() * 0.4d < watch.getElapsedTime();
+            return song.getDuration() * 0.4d < stopwatch.getElapsedTime();
         }
 
         void notifySongChanged(Song song) {
             synchronized (this) {
-                watch.reset();
+                stopwatch.reset();
                 this.song = song;
             }
         }
@@ -1057,11 +1176,17 @@ public class FlairMusicService extends Service {
         void notifyPlayStateChanged(boolean isPlaying) {
             synchronized (this) {
                 if (isPlaying) {
-                    watch.start();
+                    stopwatch.start();
                 } else {
-                    watch.pause();
+                    stopwatch.pause();
                 }
             }
+        }
+    }
+
+    public class FlairMusicBinder extends Binder {
+        public FlairMusicService getService() {
+            return FlairMusicService.this;
         }
     }
 }
