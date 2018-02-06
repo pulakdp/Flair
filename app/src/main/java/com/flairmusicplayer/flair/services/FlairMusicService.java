@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -33,7 +35,6 @@ import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.providers.FlairPlaybackState;
@@ -44,9 +45,9 @@ import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
 import com.flairmusicplayer.flair.utils.Stopwatch;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import timber.log.Timber;
 
@@ -766,14 +767,13 @@ public class FlairMusicService extends Service {
 
         Bitmap artwork = null;
         try {
-            artwork = Glide.with(getApplicationContext())
-                    .asBitmap()
-                    .load(Song.getAlbumArtUri(currentSong.getAlbumId()))
-                    .into(500, 500)
-                    .get();
-        } catch (InterruptedException | ExecutionException e) {
+            artwork = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Song.getAlbumArtUri(currentSong.getAlbumId()));
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (artwork == null)
+            artwork = ((BitmapDrawable) getResources().getDrawable(R.drawable.album_art_placeholder)).getBitmap();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
