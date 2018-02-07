@@ -146,10 +146,6 @@ public class MainActivity extends SlidingPanelActivity
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
-    public void setPanelTouchEnabled(boolean touchEnabled) {
-        panel.setTouchEnabled(touchEnabled);
-    }
-
     @Override
     protected View createContentView() {
         View drawerLayout = getLayoutInflater().inflate(R.layout.activity_main_drawer_layout, null);

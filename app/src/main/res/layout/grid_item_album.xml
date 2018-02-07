@@ -19,6 +19,7 @@
             android:id="@+id/album_art"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:transitionName="transition_album_art"
             android:scaleType="centerCrop"/>
 
         <LinearLayout

@@ -1,12 +1,12 @@
 package com.flairmusicplayer.flair.adapters;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,6 +25,7 @@ import com.flairmusicplayer.flair.customviews.SquareImageView;
 import com.flairmusicplayer.flair.models.Album;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.NavUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
@@ -37,20 +38,20 @@ import butterknife.ButterKnife;
  */
 
 public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.AlbumItemViewHolder>
-        implements FastScrollRecyclerView.SectionedAdapter{
+        implements FastScrollRecyclerView.SectionedAdapter {
 
     private ArrayList<Album> albumList = new ArrayList<>();
-    private Context context;
+    private AppCompatActivity activity;
 
-    public AlbumAdapter(ArrayList<Album> albumList) {
+    public AlbumAdapter(AppCompatActivity activity, ArrayList<Album> albumList) {
+        this.activity = activity;
         this.albumList = albumList;
     }
 
     @Override
     public AlbumAdapter.AlbumItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context = parent.getContext();
         @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(context).inflate(R.layout.grid_item_album, parent, false);
+        View view = LayoutInflater.from(activity).inflate(R.layout.grid_item_album, parent, false);
         return new AlbumItemViewHolder(view);
     }
 
@@ -59,14 +60,14 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
         String albumName = albumList.get(position).getAlbumName();
         holder.albumName.setText(albumName);
         holder.artistName.setText(albumList.get(position).getArtistName());
-        final Drawable textDrawable = FlairUtils.getRectTextDrawable(context, albumName);
-        Glide.with(context)
+        final Drawable textDrawable = FlairUtils.getRectTextDrawable(activity, albumName);
+        Glide.with(activity)
                 .load(Song.getAlbumArtUri(albumList.get(position).getAlbumId()))
                 .apply(new RequestOptions().error(textDrawable))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        holder.footerView.setBackgroundColor(context.getResources().getColor(R.color.letter_tile_default_color));
+                        holder.footerView.setBackgroundColor(activity.getResources().getColor(R.color.letter_tile_default_color));
                         holder.albumName.setTextColor(Color.BLACK);
                         holder.artistName.setTextColor(Color.BLACK);
                         return false;
@@ -108,7 +109,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
         return albumList != null ? albumList.size() : 0;
     }
 
-    public void setData(ArrayList<Album> albums){
+    public void setData(ArrayList<Album> albums) {
         albumList = albums;
         notifyDataSetChanged();
     }
@@ -119,7 +120,8 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
         return String.valueOf(albumList.get(position).getAlbumName().charAt(0)).toUpperCase();
     }
 
-    public class AlbumItemViewHolder extends RecyclerView.ViewHolder {
+    public class AlbumItemViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
 
         @BindView(R.id.album_art)
         SquareImageView albumArt;
@@ -136,6 +138,12 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
         public AlbumItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            NavUtils.goToAlbum(activity, albumList.get(getAdapterPosition()), albumArt);
         }
     }
 }

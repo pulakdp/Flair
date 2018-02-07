@@ -5,11 +5,16 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.media.audiofx.AudioEffect;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.flairmusicplayer.flair.R;
+import com.flairmusicplayer.flair.models.Album;
 import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.services.FlairMusicService;
+import com.flairmusicplayer.flair.ui.activities.AlbumDetailActivity;
 import com.flairmusicplayer.flair.ui.activities.MainActivity;
 import com.flairmusicplayer.flair.ui.activities.PlaylistDetailActivity;
 
@@ -39,6 +44,18 @@ public class NavUtils {
         final Intent intent = new Intent(activity, PlaylistDetailActivity.class);
         intent.putExtra(PlaylistDetailActivity.EXTRA_PLAYLIST, playlist);
         activity.startActivity(intent);
+    }
+
+    public static void goToAlbum(@NonNull final Activity activity, final Album album, @NonNull ImageView sharedImage) {
+        final Intent intent = new Intent(activity, AlbumDetailActivity.class);
+        intent.putExtra(AlbumDetailActivity.EXTRA_ALBUM, album);
+
+        //noinspection unchecked
+        activity.startActivity(intent,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                        sharedImage,
+                        activity.getResources().getString(R.string.transition_album_art))
+                        .toBundle());
     }
 
     public static Intent getNowPlayingIntent(FlairMusicService flairMusicService) {

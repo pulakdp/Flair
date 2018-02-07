@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,8 +26,8 @@ import com.flairmusicplayer.flair.customviews.RepeatButton;
 import com.flairmusicplayer.flair.customviews.ShuffleButton;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
-import com.flairmusicplayer.flair.ui.activities.MainActivity;
-import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.ui.activities.SlidingPanelActivity;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
 
 import java.util.ArrayList;
@@ -140,7 +141,7 @@ public class NowPlayingFragment extends MusicServiceFragment
         if (!new Song().equals(currentSong) && currentSong != null) {
             songTitle.setText(currentSong.getTitle());
             songArtist.setText(currentSong.getArtistName());
-            totalPlayTime.setText(FlairUtils.formatTimeToString((int) currentSong.getDuration()));
+            totalPlayTime.setText(MusicUtils.formatTimeToString((int) currentSong.getDuration()));
             if (FlairMusicController.getSongProgress() != 0) {
                 setProgress();
                 updateCurrentPlayTime(FlairMusicController.getSongProgress());
@@ -165,7 +166,7 @@ public class NowPlayingFragment extends MusicServiceFragment
     }
 
     private void setUpRecyclerView() {
-        queueAdapter = new PlayingQueueAdapter(new ArrayList<Song>());
+        queueAdapter = new PlayingQueueAdapter((AppCompatActivity) getActivity(), new ArrayList<Song>());
         layoutManager = new LinearLayoutManager(getContext());
         playingQueueList.setLayoutManager(layoutManager);
         playingQueueList.setAdapter(queueAdapter);
@@ -267,9 +268,8 @@ public class NowPlayingFragment extends MusicServiceFragment
     }
 
     private void enablePanelTouchEvent(boolean touchEvent) {
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity != null)
-            activity.setPanelTouchEnabled(touchEvent);
+        if (getActivity() != null)
+            ((SlidingPanelActivity) getActivity()).setPanelTouchEnabled(touchEvent);
     }
 
     public void setProgress() {
@@ -286,7 +286,7 @@ public class NowPlayingFragment extends MusicServiceFragment
     }
 
     public void updateCurrentPlayTime(int position) {
-        currentPlayTime.setText(FlairUtils.formatTimeToString(position));
+        currentPlayTime.setText(MusicUtils.formatTimeToString(position));
     }
 
     @Override

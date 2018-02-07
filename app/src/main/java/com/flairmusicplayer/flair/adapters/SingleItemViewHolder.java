@@ -24,6 +24,10 @@ public class SingleItemViewHolder extends RecyclerView.ViewHolder
     public ImageView itemImage;
 
     @Nullable
+    @BindView(R.id.item_image_text)
+    public TextView itemImageText;
+
+    @Nullable
     @BindView(R.id.item_title)
     public TextView itemTitle;
 

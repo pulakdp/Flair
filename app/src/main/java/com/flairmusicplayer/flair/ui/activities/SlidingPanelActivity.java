@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.flairmusicplayer.flair.R;
+import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.fragments.MiniPlayerFragment;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -60,6 +61,10 @@ public abstract class SlidingPanelActivity extends MusicServiceActivity
             }
         });
         panel.addPanelSlideListener(this);
+    }
+
+    public void setPanelTouchEnabled(boolean touchEnabled) {
+        panel.setTouchEnabled(touchEnabled);
     }
 
     public SlidingUpPanelLayout.PanelState getPanelState() {
@@ -122,5 +127,19 @@ public abstract class SlidingPanelActivity extends MusicServiceActivity
         ViewGroup contentContainer = slidingPanelLayout.findViewById(R.id.content_container);
         getLayoutInflater().inflate(resId, contentContainer);
         return slidingPanelLayout;
+    }
+
+    @Override
+    public void onMetaChanged() {
+        super.onMetaChanged();
+        if (!FlairMusicController.getPlayingQueue().isEmpty()) {
+            hideBottomBar(false);
+        }
+    }
+
+    @Override
+    public void onQueueChanged() {
+        super.onQueueChanged();
+        hideBottomBar(FlairMusicController.getPlayingQueue().isEmpty());
     }
 }

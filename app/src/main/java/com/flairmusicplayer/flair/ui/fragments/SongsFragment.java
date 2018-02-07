@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,7 +46,6 @@ public class SongsFragment extends MusicServiceFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        songAdapter = new SongAdapter(new ArrayList<Song>());
     }
 
     @Override
@@ -60,17 +60,19 @@ public class SongsFragment extends MusicServiceFragment
         View rootView = inflater.inflate(R.layout.fragment_tab_recycler_view, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
-        layoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        songList.setLayoutManager(layoutManager);
-        songList.setAdapter(songAdapter);
-
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        songAdapter = new SongAdapter((AppCompatActivity) getActivity(), new ArrayList<Song>());
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+        layoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        songList.setLayoutManager(layoutManager);
+        songList.setAdapter(songAdapter);
+
         final FragmentManager fm = getActivity() != null ? getActivity().getSupportFragmentManager() : null;
         LibraryFragment libFragment = null;
         if (fm != null) {

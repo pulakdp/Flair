@@ -20,8 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.flairmusicplayer.flair.R;
 
-import java.util.Locale;
-
 /**
  * Author: PulakDebasish
  */
@@ -61,18 +59,6 @@ public class FlairUtils {
         drawable.draw(canvas);
 
         return bitmap;
-    }
-
-    public static String formatTimeToString(int timeInMillis) {
-        int timeInSeconds = timeInMillis / 1000;
-        int seconds = timeInSeconds % 60;
-        int minutes = (timeInSeconds / 60) % 60;
-        int hours = timeInSeconds / 3600; // Such a big file. Wow.
-        if (hours > 0) {
-            return String.format(Locale.getDefault(),"%d:%02d:%02d", hours, minutes, seconds);
-        } else {
-            return String.format(Locale.getDefault(),"%02d:%02d", minutes, seconds);
-        }
     }
 
     public static int getBlackWhiteColor(int color) {

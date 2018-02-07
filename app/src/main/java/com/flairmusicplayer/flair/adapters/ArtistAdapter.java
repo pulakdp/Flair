@@ -1,8 +1,8 @@
 package com.flairmusicplayer.flair.adapters;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +22,17 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         implements FastScrollRecyclerView.SectionedAdapter {
 
     private ArrayList<Artist> artists;
-    private Context context;
+    private AppCompatActivity activity;
 
-    public ArtistAdapter(ArrayList<Artist> artists) {
+    public ArtistAdapter(AppCompatActivity activity, ArrayList<Artist> artists) {
+        this.activity = activity;
         this.artists = artists;
     }
 
     @Override
     public ArtistItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context = parent.getContext();
         @SuppressLint("InflateParams")
-        View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_single, null);
+        View itemView = LayoutInflater.from(activity).inflate(R.layout.list_item_single, null);
 
         return new ArtistItemViewHolder(itemView);
     }
@@ -53,7 +53,7 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
             holder.itemDetailText.setText(albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs);
 
         if (holder.itemImage != null)
-            holder.itemImage.setImageDrawable(FlairUtils.getRoundTextDrawable(context, artistName));
+            holder.itemImage.setImageDrawable(FlairUtils.getRoundTextDrawable(activity, artistName));
     }
 
     public void setData(ArrayList<Artist> artists) {

@@ -1,9 +1,9 @@
 package com.flairmusicplayer.flair.adapters;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +26,11 @@ public class SongAdapter
         extends FastScrollRecyclerView.Adapter<SongAdapter.SongItemViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
 
-    private ArrayList<Song> songList = new ArrayList<>();
-    private Context context;
+    public ArrayList<Song> songList = new ArrayList<>();
+    private AppCompatActivity activity;
 
-    public SongAdapter(ArrayList<Song> songList) {
+    public SongAdapter(AppCompatActivity activity, ArrayList<Song> songList) {
+        this.activity = activity;
         this.songList = songList;
     }
 
@@ -41,9 +42,8 @@ public class SongAdapter
 
     @Override
     public SongItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context = parent.getContext();
         @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_single, null);
+        View view = LayoutInflater.from(activity).inflate(R.layout.list_item_single, null);
         return new SongItemViewHolder(view);
     }
 
@@ -52,10 +52,10 @@ public class SongAdapter
         Uri albumArtUri = Song.getAlbumArtUri(songList.get(position).getAlbumId());
         final String songTitle = songList.get(position).getTitle();
         if (holder.itemImage != null)
-            Glide.with(context)
+            Glide.with(activity)
                     .load(albumArtUri)
                     .apply(RequestOptions.circleCropTransform())
-                    .apply(new RequestOptions().placeholder(FlairUtils.getRoundTextDrawable(context, songTitle)))
+                    .apply(new RequestOptions().placeholder(FlairUtils.getRoundTextDrawable(activity, songTitle)))
                     .into(holder.itemImage);
 
         if (holder.itemTitle != null)
@@ -87,7 +87,7 @@ public class SongAdapter
 
         @Override
         public void onClick(View view) {
-            playAll(getLayoutPosition());
+            playAll(getAdapterPosition());
         }
     }
 }

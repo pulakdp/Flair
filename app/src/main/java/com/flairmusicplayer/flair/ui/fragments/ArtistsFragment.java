@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,6 @@ public class ArtistsFragment extends MusicServiceFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        artistAdapter = new ArtistAdapter(new ArrayList<Artist>());
     }
 
     @Nullable
@@ -58,6 +58,7 @@ public class ArtistsFragment extends MusicServiceFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        artistAdapter = new ArtistAdapter((AppCompatActivity) getActivity(), new ArrayList<Artist>());
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
         artistListView.setLayoutManager(layoutManager);

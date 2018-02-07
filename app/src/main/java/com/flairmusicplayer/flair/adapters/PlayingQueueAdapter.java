@@ -1,5 +1,6 @@
 package com.flairmusicplayer.flair.adapters;
 
+import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 
 import com.flairmusicplayer.flair.models.Song;
@@ -12,8 +13,8 @@ import java.util.ArrayList;
 
 public class PlayingQueueAdapter extends SongAdapter {
 
-    public PlayingQueueAdapter(ArrayList<Song> songList) {
-        super(songList);
+    public PlayingQueueAdapter(AppCompatActivity activity, ArrayList<Song> songList) {
+        super(activity, songList);
     }
 
     @Override

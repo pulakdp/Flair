@@ -17,7 +17,6 @@ import com.flairmusicplayer.flair.adapters.PlaylistSongAdapter;
 import com.flairmusicplayer.flair.loaders.PlaylistSongLoader;
 import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.models.Song;
-import com.flairmusicplayer.flair.services.FlairMusicController;
 
 import java.util.ArrayList;
 
@@ -114,19 +113,5 @@ public class PlaylistDetailActivity extends SlidingPanelActivity
     @Override
     public void onLoaderReset(Loader<ArrayList<Song>> loader) {
         adapter.setData(new ArrayList<Song>());
-    }
-
-    @Override
-    public void onMetaChanged() {
-        super.onMetaChanged();
-        if (!FlairMusicController.getPlayingQueue().isEmpty()) {
-            hideBottomBar(false);
-        }
-    }
-
-    @Override
-    public void onQueueChanged() {
-        super.onQueueChanged();
-        hideBottomBar(FlairMusicController.getPlayingQueue().isEmpty());
     }
 }
