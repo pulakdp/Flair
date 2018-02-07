@@ -39,7 +39,6 @@
                 android:gravity="center"
                 android:text="Song Title"
                 android:maxLines="2"
-                android:ellipsize="marquee"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"/>
 
@@ -48,7 +47,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:ellipsize="marquee"
                 android:textStyle="bold"
                 android:text="Song Artist"
                 android:textColor="@color/colorAccent"

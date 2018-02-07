@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/black">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/album_art_widget"
@@ -18,37 +19,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/player_control_scrim"
+        android:background="@drawable/widget_down_scrim"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <ImageButton
             android:id="@+id/prev_widget"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/ic_skip_previous_black_24dp"
-            tools:tint="@color/black"/>
+            android:background="?android:attr/selectableItemBackground"
+            tools:src="@drawable/ic_skip_previous_black_24dp"/>
 
         <ImageButton
-            android:id="@+id/button_toggle_play_pause"
+            android:id="@+id/toggle_play_pause_widget"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
             tools:ignore="ContentDescription"
+            android:background="?android:attr/selectableItemBackground"
             tools:src="@drawable/ic_play_arrow_white_24dp"
             tools:tint="@color/black"/>
 
         <ImageButton
-            android:id="@+id/button_next"
+            android:id="@+id/next_widget"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
             tools:ignore="ContentDescription"
+            android:background="?android:attr/selectableItemBackground"
             tools:src="@drawable/ic_skip_next_black_24dp"
             tools:tint="@color/black"/>
 
@@ -62,35 +62,39 @@
         android:layout_alignParentTop="true"/>
 
     <LinearLayout
-        android:id="@+id/media_titles"
+        android:id="@+id/song_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:background="@drawable/widget_top_scrim"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:paddingBottom="32dp">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/song_title_widget"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/black"
             tools:text="Title"/>
 
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/song_artist_widget"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/black"
+            android:textStyle="bold"
             tools:text="Text"/>
 
     </LinearLayout>
+
 
 </RelativeLayout>

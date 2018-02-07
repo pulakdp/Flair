@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -75,7 +74,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Bitmap albumArt = ((BitmapDrawable) resource).getBitmap();
+                        Bitmap albumArt = FlairUtils.getBitmapFromDrawable(resource);
                         Palette.from(albumArt).generate(new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {

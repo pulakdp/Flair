@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -30,6 +30,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
@@ -44,6 +45,7 @@ import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
 import com.flairmusicplayer.flair.utils.Stopwatch;
+import com.flairmusicplayer.flair.widgets.BigWidget;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -79,6 +81,9 @@ public class FlairMusicService extends Service {
     public static final int NOTIFICATION_ID = 1;
     public static final String NOTIFICATION_CHANNEL_ID = "flair_playing_notification";
 
+    public static final String WIDGET_UPDATE = FLAIR_PACKAGE_NAME + ".widgetupdate";
+    public static final String EXTRA_WIDGET_NAME = FLAIR_PACKAGE_NAME + "widget_name";
+
     public static final int SHUFFLE_MODE_NONE = 0;
     public static final int SHUFFLE_MODE_SHUFFLE = 1;
 
@@ -90,18 +95,23 @@ public class FlairMusicService extends Service {
     public static final int SET_POSITION = 5;
     public static final int SAVE_QUEUES = 6;
     public static final int RESTORE_QUEUES = 7;
+    private static final int FOCUS_CHANGE = 8;
+
     public static final int TRACK_ENDED = 1;
     public static final int TRACK_WENT_TO_NEXT = 2;
+
     public static final String SAVED_POSITION = "POSITION";
     public static final String SAVED_SONG_PROGRESS = "POSITION_IN_TRACK";
     public static final String SAVED_SHUFFLE_MODE = "SHUFFLE_MODE";
     public static final String SAVED_REPEAT_MODE = "REPEAT_MODE";
-    private static final int FOCUS_CHANGE = 8;
+
     private static final int NOTIFY_MODE_FOREGROUND = 1;
     private static final int NOTIFY_MODE_BACKGROUND = 2;
 
     private static final int IDLE_DELAY = 5 * 60 * 1000;
     private static final long REWIND_INSTEAD_PREVIOUS_THRESHOLD = 2000;
+
+    private BigWidget bigWidget = BigWidget.getInstance();
 
     private final IBinder musicBinder = new FlairMusicBinder();
 
@@ -182,7 +192,7 @@ public class FlairMusicService extends Service {
 
         setupMediaSession();
 
-        uiThreadHandler = new Handler();
+        registerReceiver(widgetIntentReceiver, new IntentFilter(WIDGET_UPDATE));
 
         initNotification();
 
@@ -196,7 +206,7 @@ public class FlairMusicService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        unregisterReceiver(widgetIntentReceiver);
         if (becomingNoisyReceiverRegistered) {
             unregisterReceiver(becomingNoisyReceiver);
             becomingNoisyReceiverRegistered = false;
@@ -398,7 +408,7 @@ public class FlairMusicService extends Service {
 
     public void sendChangeInternal(final String what) {
         sendBroadcast(new Intent(what));
-        //TODO: handle changes for widget
+        bigWidget.notifyChange(this, what);
     }
 
     public void sendPublicIntent(final String what) {
@@ -767,13 +777,15 @@ public class FlairMusicService extends Service {
 
         Bitmap artwork = null;
         try {
-            artwork = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Song.getAlbumArtUri(currentSong.getAlbumId()));
+            artwork = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                    Song.getAlbumArtUri(currentSong.getAlbumId()));
         } catch (IOException e) {
-            e.printStackTrace();
+            //do nothing
         }
 
         if (artwork == null)
-            artwork = ((BitmapDrawable) getResources().getDrawable(R.drawable.album_art_placeholder)).getBitmap();
+            artwork = FlairUtils.getBitmapFromDrawable(getResources()
+                    .getDrawable(R.drawable.album_art_placeholder));
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -792,13 +804,15 @@ public class FlairMusicService extends Service {
 
         if (FlairUtils.isLollipop()) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
-            android.support.v4.media.app.NotificationCompat.MediaStyle style = new android.support.v4.media.app.NotificationCompat.MediaStyle()
+            MediaStyle style = new MediaStyle()
                     .setMediaSession(mediaSession.getSessionToken())
                     .setShowActionsInCompactView(0, 1, 2, 3);
             builder.setStyle(style);
         }
         if (artwork != null && FlairUtils.isLollipop())
-            builder.setColor(Palette.from(artwork).generate().getVibrantColor(Color.parseColor("#403f4d")));
+            builder.setColor(Palette.from(artwork)
+                    .generate()
+                    .getVibrantColor(Color.parseColor("#403f4d")));
 
         if (FlairUtils.isOreo())
             builder.setColorized(true);
@@ -866,8 +880,13 @@ public class FlairMusicService extends Service {
      * Handle broadcast intents from widgets
      */
     public void handleIntent(Intent intent) {
-        final String action = intent.getAction();
-        //TODO: complete this after addition of widgets
+        if (intent == null)
+            return;
+        final String command = intent.getStringExtra(EXTRA_WIDGET_NAME);
+        if (BigWidget.WIDGET_NAME.equals(command)) {
+            final int[] ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+            bigWidget.performUpdate(FlairMusicService.this, ids);
+        }
     }
 
     public static final class MultiPlayer

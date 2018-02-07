@@ -26,11 +26,25 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.SearchActivity" />
+        <activity android:name=".ui.activities.SearchActivity"/>
         <activity android:name=".ui.activities.PlaylistDetailActivity"/>
 
-        <service android:name=".services.FlairMusicService"
+        <service
+            android:name=".services.FlairMusicService"
             android:enabled="true"/>
+
+        <receiver
+            android:name=".widgets.BigWidget"
+            android:exported="false"
+            android:label="@string/widget_big_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_big"/>
+        </receiver>
     </application>
 
 </manifest>
