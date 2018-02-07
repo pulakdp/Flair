@@ -1,5 +1,6 @@
 package com.flairmusicplayer.flair.ui.activities;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,7 @@ import com.flairmusicplayer.flair.adapters.AlbumSongAdapter;
 import com.flairmusicplayer.flair.models.Album;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
+import com.flairmusicplayer.flair.utils.FlairUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,9 +62,10 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
     }
 
     private void setUpAlbum() {
+        final Drawable textDrawable = FlairUtils.getRectTextDrawable(this, album.getAlbumName());
         Glide.with(this)
                 .load(Song.getAlbumArtUri(album.getAlbumId()))
-                .apply(new RequestOptions().placeholder(R.drawable.album_art_placeholder))
+                .apply(new RequestOptions().error(textDrawable))
                 .into(albumArt);
         albumName.setText(album.getAlbumName());
     }
