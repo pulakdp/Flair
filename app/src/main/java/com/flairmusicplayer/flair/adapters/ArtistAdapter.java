@@ -1,15 +1,21 @@
 package com.flairmusicplayer.flair.adapters;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Artist;
+import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.NavUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
@@ -52,8 +58,14 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         if (holder.itemDetailText != null)
             holder.itemDetailText.setText(albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs);
 
-        if (holder.itemImage != null)
-            holder.itemImage.setImageDrawable(FlairUtils.getRoundTextDrawable(activity, artistName));
+        if (holder.itemImage != null) {
+            final TextDrawable textDrawable = FlairUtils.getRoundTextDrawable(activity, artistName);
+            Glide.with(activity)
+                    .load(Song.getAlbumArtUri(artists.get(position).albumsOfArtist.get(0).getAlbumId()))
+                    .apply(new RequestOptions().circleCrop())
+                    .apply(new RequestOptions().error(textDrawable))
+                    .into(holder.itemImage);
+        }
     }
 
     public void setData(ArrayList<Artist> artists) {
@@ -76,6 +88,15 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
 
         public ArtistItemViewHolder(View itemView) {
             super(itemView);
+            if (itemImage != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                itemImage.setTransitionName(activity.getResources().getString(R.string.transition_artist_image));
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (itemImage != null) {
+                NavUtils.goToArtist(activity, artists.get(getAdapterPosition()), itemImage);
+            }
         }
     }
 

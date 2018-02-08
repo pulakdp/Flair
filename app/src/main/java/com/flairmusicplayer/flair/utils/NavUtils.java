@@ -11,10 +11,12 @@ import android.widget.Toast;
 
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Album;
+import com.flairmusicplayer.flair.models.Artist;
 import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.services.FlairMusicService;
 import com.flairmusicplayer.flair.ui.activities.AlbumDetailActivity;
+import com.flairmusicplayer.flair.ui.activities.ArtistDetailActivity;
 import com.flairmusicplayer.flair.ui.activities.MainActivity;
 import com.flairmusicplayer.flair.ui.activities.PlaylistDetailActivity;
 
@@ -55,6 +57,18 @@ public class NavUtils {
                 ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                         sharedImage,
                         activity.getResources().getString(R.string.transition_album_art))
+                        .toBundle());
+    }
+
+    public static void goToArtist(@NonNull final Activity activity, final Artist artist, @NonNull ImageView sharedImage) {
+        final Intent intent = new Intent(activity, ArtistDetailActivity.class);
+        intent.putExtra(ArtistDetailActivity.EXTRA_ARTIST, artist);
+
+        //noinspection unchecked
+        activity.startActivity(intent,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                        sharedImage,
+                        activity.getResources().getString(R.string.transition_artist_image))
                         .toBundle());
     }
 

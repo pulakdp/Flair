@@ -37,8 +37,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Song Title"
                 android:maxLines="2"
+                android:text="Song Title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"/>
 
@@ -47,10 +47,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textStyle="bold"
                 android:text="Song Artist"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/colorAccent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:textStyle="bold"/>
 
         </LinearLayout>
 

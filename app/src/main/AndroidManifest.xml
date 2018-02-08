@@ -29,6 +29,7 @@
         <activity android:name=".ui.activities.SearchActivity"/>
         <activity android:name=".ui.activities.PlaylistDetailActivity"/>
         <activity android:name=".ui.activities.AlbumDetailActivity"/>
+        <activity android:name=".ui.activities.ArtistDetailActivity"/>
 
         <service
             android:name=".services.FlairMusicService"

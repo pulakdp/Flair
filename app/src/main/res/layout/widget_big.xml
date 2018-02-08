@@ -28,8 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:ignore="ContentDescription"
             android:background="?android:attr/selectableItemBackground"
+            tools:ignore="ContentDescription"
             tools:src="@drawable/ic_skip_previous_black_24dp"/>
 
         <ImageButton
@@ -37,8 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:ignore="ContentDescription"
             android:background="?android:attr/selectableItemBackground"
+            tools:ignore="ContentDescription"
             tools:src="@drawable/ic_play_arrow_white_24dp"
             tools:tint="@color/black"/>
 
@@ -47,8 +47,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:ignore="ContentDescription"
             android:background="?android:attr/selectableItemBackground"
+            tools:ignore="ContentDescription"
             tools:src="@drawable/ic_skip_next_black_24dp"
             tools:tint="@color/black"/>
 

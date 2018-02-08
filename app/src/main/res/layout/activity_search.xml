@@ -7,8 +7,8 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/search_toolbar"
-        android:background="@color/colorPrimary"
-        style="@style/Toolbar"/>
+        style="@style/Toolbar"
+        android:background="@color/colorPrimary"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:id="@+id/search_results_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"/>
 
         <TextView
             android:id="@+id/empty_text"
@@ -28,7 +28,7 @@
             android:fontFamily="sans-serif-light"
             android:text="@string/no_search_results"
             android:textColor="?android:textColorSecondary"
-            android:textSize="@dimen/empty_text_size" />
+            android:textSize="@dimen/empty_text_size"/>
 
     </FrameLayout>
 

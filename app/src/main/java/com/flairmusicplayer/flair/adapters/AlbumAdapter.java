@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.AlbumItemViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
 
-    private ArrayList<Album> albumList = new ArrayList<>();
+    public ArrayList<Album> albumList = new ArrayList<>();
     private AppCompatActivity activity;
 
     public AlbumAdapter(AppCompatActivity activity, ArrayList<Album> albumList) {
@@ -59,7 +59,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
     public void onBindViewHolder(final AlbumAdapter.AlbumItemViewHolder holder, int position) {
         String albumName = albumList.get(position).getAlbumName();
         holder.albumName.setText(albumName);
-        holder.artistName.setText(albumList.get(position).getArtistName());
+        holder.albumDetail.setText(albumList.get(position).getArtistName());
         final Drawable textDrawable = FlairUtils.getRectTextDrawable(activity, albumName);
         Glide.with(activity)
                 .load(Song.getAlbumArtUri(albumList.get(position).getAlbumId()))
@@ -69,7 +69,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         holder.footerView.setBackgroundColor(activity.getResources().getColor(R.color.letter_tile_default_color));
                         holder.albumName.setTextColor(Color.BLACK);
-                        holder.artistName.setTextColor(Color.BLACK);
+                        holder.albumDetail.setTextColor(Color.BLACK);
                         return false;
                     }
 
@@ -85,7 +85,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
                                     int textColor = FlairUtils.getBlackWhiteColor(vibrantColor);
                                     holder.footerView.setBackgroundColor(vibrantColor);
                                     holder.albumName.setTextColor(textColor);
-                                    holder.artistName.setTextColor(textColor);
+                                    holder.albumDetail.setTextColor(textColor);
                                 } else {
                                     Palette.Swatch mutedSwatch = palette.getMutedSwatch();
                                     if (mutedSwatch != null) {
@@ -93,7 +93,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
                                         int textColor = FlairUtils.getBlackWhiteColor(mutedColor);
                                         holder.footerView.setBackgroundColor(mutedColor);
                                         holder.albumName.setTextColor(textColor);
-                                        holder.artistName.setTextColor(textColor);
+                                        holder.albumDetail.setTextColor(textColor);
                                     }
                                 }
                             }
@@ -129,8 +129,8 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
         @BindView(R.id.album_name)
         TextView albumName;
 
-        @BindView(R.id.album_artist)
-        TextView artistName;
+        @BindView(R.id.album_detail)
+        TextView albumDetail;
 
         @BindView(R.id.album_footer)
         View footerView;

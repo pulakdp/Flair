@@ -15,8 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
-import com.flairmusicplayer.flair.adapters.AlbumSongAdapter;
+import com.flairmusicplayer.flair.adapters.ArtistAlbumAdapter;
+import com.flairmusicplayer.flair.adapters.ArtistSongAdapter;
 import com.flairmusicplayer.flair.models.Album;
+import com.flairmusicplayer.flair.models.Artist;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
@@ -30,22 +32,31 @@ import butterknife.ButterKnife;
  * Author: PulakDebasish
  */
 
-public class AlbumDetailActivity extends SlidingPanelActivity {
+public class ArtistDetailActivity extends SlidingPanelActivity {
 
-    public static final String EXTRA_ALBUM = "extra_album";
-    @BindView(R.id.album_art)
-    ImageView albumArt;
-    @BindView(R.id.album_details_toolbar)
+    public static final String EXTRA_ARTIST = "extra_artist";
+
+    @BindView(R.id.artist_detail_toolbar)
     Toolbar toolbar;
-    @BindView(R.id.album_name)
-    TextView albumName;
-    @BindView(R.id.album_song_list)
-    RecyclerView albumSongList;
+
+    @BindView(R.id.artist_image)
+    ImageView artistImageView;
+
+    @BindView(R.id.artist_name)
+    TextView artistNameView;
+
+    @BindView(R.id.artist_album_recycler_view)
+    RecyclerView albumRecyclerView;
+
+    @BindView(R.id.artist_song_recycler_view)
+    RecyclerView songRecyclerView;
+
     @BindView(R.id.shuffle_fab)
     FloatingActionButton shuffleFab;
 
-    private Album album;
-    private AlbumSongAdapter albumSongAdapter;
+    private Artist artist;
+    private ArtistSongAdapter artistSongAdapter;
+    private ArtistAlbumAdapter artistAlbumAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,23 +64,24 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
         ButterKnife.bind(this);
 
         if (getIntent().getExtras() != null) {
-            album = getIntent().getExtras().getParcelable(EXTRA_ALBUM);
-            setUpAlbum();
+            artist = getIntent().getExtras().getParcelable(EXTRA_ARTIST);
+            if (artist != null)
+                setUpArtist();
         }
 
         setUpToolbar();
-        setUpAdapter();
-        setUpRecyclerView();
+        setUpAdapters();
+        setUpRecyclerViews();
         setUpFab();
     }
 
-    private void setUpAlbum() {
-        final Drawable textDrawable = FlairUtils.getRectTextDrawable(this, album.getAlbumName());
+    private void setUpArtist() {
+        final Drawable textDrawable = FlairUtils.getRectTextDrawable(this, artist.getArtistName());
         Glide.with(this)
-                .load(Song.getAlbumArtUri(album.getAlbumId()))
+                .load(Song.getAlbumArtUri(artist.albumsOfArtist.get(0).getAlbumId()))
                 .apply(new RequestOptions().error(textDrawable))
-                .into(albumArt);
-        albumName.setText(album.getAlbumName());
+                .into(artistImageView);
+        artistNameView.setText(artist.getArtistName());
     }
 
     private void setUpToolbar() {
@@ -79,14 +91,20 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setUpAdapter() {
-        albumSongAdapter = new AlbumSongAdapter(this,
-                album != null ? album.songsInAlbum : new ArrayList<Song>());
+    private void setUpAdapters() {
+        artistSongAdapter = new ArtistSongAdapter(this,
+                artist != null ? artist.getSongsForArtist() : new ArrayList<Song>());
+        artistAlbumAdapter = new ArtistAlbumAdapter(this,
+                artist != null ? artist.albumsOfArtist : new ArrayList<Album>());
     }
 
-    private void setUpRecyclerView() {
-        albumSongList.setLayoutManager(new LinearLayoutManager(this));
-        albumSongList.setAdapter(albumSongAdapter);
+    private void setUpRecyclerViews() {
+        songRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        songRecyclerView.setAdapter(artistSongAdapter);
+
+        albumRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false));
+        albumRecyclerView.setAdapter(artistAlbumAdapter);
     }
 
     private void setUpFab() {
@@ -94,7 +112,7 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
             @Override
             public void onClick(View v) {
                 FlairMusicController
-                        .openAndShuffleQueue(album.songsInAlbum, true);
+                        .openAndShuffleQueue(artist.getSongsForArtist(), true);
             }
         });
     }
@@ -117,6 +135,6 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
 
     @Override
     protected View createContentView() {
-        return wrapSlidingPanel(R.layout.activity_album_detail);
+        return wrapSlidingPanel(R.layout.activity_artist_detail);
     }
 }

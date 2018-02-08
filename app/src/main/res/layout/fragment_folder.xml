@@ -53,8 +53,8 @@
             android:fontFamily="sans-serif-light"
             android:text="@string/no_files"
             android:textColor="?android:textColorSecondary"
-            android:visibility="gone"
-            android:textSize="@dimen/empty_text_size"/>
+            android:textSize="@dimen/empty_text_size"
+            android:visibility="gone"/>
 
     </FrameLayout>
 
