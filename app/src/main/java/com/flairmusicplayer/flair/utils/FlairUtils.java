@@ -33,8 +33,12 @@ public class FlairUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
-    public static boolean isLollipop() {
+    public static boolean isLollipopOrAbove() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static boolean isMarshmallowOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
     public static Bitmap getBitmapFromDrawable(Drawable resource) {

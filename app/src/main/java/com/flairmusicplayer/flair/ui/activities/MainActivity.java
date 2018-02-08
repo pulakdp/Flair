@@ -1,10 +1,16 @@
 package com.flairmusicplayer.flair.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -23,6 +30,7 @@ import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.fragments.FoldersFragment;
 import com.flairmusicplayer.flair.ui.fragments.LibraryFragment;
+import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.PreferenceUtils;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -38,12 +46,15 @@ public class MainActivity extends SlidingPanelActivity
     public static final int LIBRARY = 0;
     public static final int FOLDERS = 1;
 
+    private static final int REQUEST_PERMISSION_FLAIR = 14;
+
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    private String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
     private HeaderViewHolder headerViewHolder;
 
     @Override
@@ -53,10 +64,53 @@ public class MainActivity extends SlidingPanelActivity
 
         headerViewHolder = new HeaderViewHolder(navigationView.getHeaderView(0));
 
-        if (savedInstanceState == null)
-            setActiveFragment(PreferenceUtils.getInstance(this).getLastActiveFragment());
-
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (FlairUtils.isMarshmallowOrAbove() && !hasPermissions()) {
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_FLAIR);
+        } else if (hasPermissions()) {
+            loadNormally();
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_FLAIR) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        //Permission Denied
+                        Toast.makeText(getApplicationContext(), R.string.need_permission, Toast.LENGTH_LONG).show();
+                    } else {
+                        //Permission Denied + Don't Ask Again = Take to app info screen
+                        Toast.makeText(getApplicationContext(), R.string.need_permission, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                    finish();
+                } else {
+                    loadNormally();
+                }
+            }
+        }
+    }
+
+    private boolean hasPermissions() {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED)
+                return false;
+        }
+        return true;
+    }
+
+    private void loadNormally() {
+        setActiveFragment(PreferenceUtils.getInstance(this).getLastActiveFragment());
     }
 
     private void setActiveFragment(int key) {

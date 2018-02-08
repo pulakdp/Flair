@@ -137,7 +137,6 @@ public class FlairMusicService extends Service {
             musicHandler.obtainMessage(FOCUS_CHANGE, focusChange, 0).sendToTarget();
         }
     };
-    private Handler uiThreadHandler;
     private MultiPlayer player;
     private final BroadcastReceiver becomingNoisyReceiver = new BroadcastReceiver() {
         @Override
@@ -802,14 +801,14 @@ public class FlairMusicService extends Service {
                         "",
                         retrievePlaybackAction(ACTION_NEXT));
 
-        if (FlairUtils.isLollipop()) {
+        if (FlairUtils.isLollipopOrAbove()) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
             MediaStyle style = new MediaStyle()
                     .setMediaSession(mediaSession.getSessionToken())
                     .setShowActionsInCompactView(0, 1, 2, 3);
             builder.setStyle(style);
         }
-        if (artwork != null && FlairUtils.isLollipop())
+        if (artwork != null && FlairUtils.isLollipopOrAbove())
             builder.setColor(Palette.from(artwork)
                     .generate()
                     .getVibrantColor(Color.parseColor("#403f4d")));
