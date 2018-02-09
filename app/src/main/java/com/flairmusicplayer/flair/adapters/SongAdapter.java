@@ -14,6 +14,7 @@ import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class SongAdapter
 
     @Override
     public void onBindViewHolder(final SongItemViewHolder holder, int position) {
-        Uri albumArtUri = Song.getAlbumArtUri(songList.get(position).getAlbumId());
+        Uri albumArtUri = MusicUtils.getAlbumArtUri(songList.get(position).getAlbumId());
         final String songTitle = songList.get(position).getTitle();
         if (holder.itemImage != null)
             Glide.with(activity)

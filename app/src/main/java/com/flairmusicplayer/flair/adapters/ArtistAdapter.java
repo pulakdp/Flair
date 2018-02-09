@@ -13,8 +13,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Artist;
-import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -61,7 +61,7 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         if (holder.itemImage != null) {
             final TextDrawable textDrawable = FlairUtils.getRoundTextDrawable(activity, artistName);
             Glide.with(activity)
-                    .load(Song.getAlbumArtUri(artists.get(position).albumsOfArtist.get(0).getAlbumId()))
+                    .load(MusicUtils.getAlbumArtUri(artists.get(position).albumsOfArtist.get(0).getAlbumId()))
                     .apply(new RequestOptions().circleCrop())
                     .apply(new RequestOptions().error(textDrawable))
                     .into(holder.itemImage);

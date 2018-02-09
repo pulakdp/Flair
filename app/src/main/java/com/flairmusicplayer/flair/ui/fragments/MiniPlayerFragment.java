@@ -16,6 +16,7 @@ import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.SwipeController;
 
 import butterknife.BindView;
@@ -91,7 +92,7 @@ public class MiniPlayerFragment extends MusicServiceFragment
 
     private void updateAlbumArtAndTitle(Song currentSong) {
         Glide.with(this)
-                .load(Song.getAlbumArtUri(currentSong.getAlbumId()))
+                .load(MusicUtils.getAlbumArtUri(currentSong.getAlbumId()))
                 .apply(RequestOptions.circleCropTransform())
                 .apply(new RequestOptions()
                         .placeholder(FlairUtils.getRoundTextDrawable(getContext(),

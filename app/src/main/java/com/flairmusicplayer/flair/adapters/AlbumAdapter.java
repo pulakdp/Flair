@@ -23,8 +23,8 @@ import com.bumptech.glide.request.target.Target;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.customviews.SquareImageView;
 import com.flairmusicplayer.flair.models.Album;
-import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -62,7 +62,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
         holder.albumDetail.setText(albumList.get(position).getArtistName());
         final Drawable textDrawable = FlairUtils.getRectTextDrawable(activity, albumName);
         Glide.with(activity)
-                .load(Song.getAlbumArtUri(albumList.get(position).getAlbumId()))
+                .load(MusicUtils.getAlbumArtUri(albumList.get(position).getAlbumId()))
                 .apply(new RequestOptions().error(textDrawable))
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -82,7 +82,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
                                 Palette.Swatch swatch = palette.getVibrantSwatch();
                                 if (swatch != null) {
                                     int vibrantColor = swatch.getRgb();
-                                    int textColor = FlairUtils.getBlackWhiteColor(vibrantColor);
+                                    int textColor = FlairUtils.getBlackWhiteColor(swatch.getTitleTextColor());
                                     holder.footerView.setBackgroundColor(vibrantColor);
                                     holder.albumName.setTextColor(textColor);
                                     holder.albumDetail.setTextColor(textColor);
@@ -90,7 +90,7 @@ public class AlbumAdapter extends FastScrollRecyclerView.Adapter<AlbumAdapter.Al
                                     Palette.Swatch mutedSwatch = palette.getMutedSwatch();
                                     if (mutedSwatch != null) {
                                         int mutedColor = mutedSwatch.getRgb();
-                                        int textColor = FlairUtils.getBlackWhiteColor(mutedColor);
+                                        int textColor = FlairUtils.getBlackWhiteColor(mutedSwatch.getTitleTextColor());
                                         holder.footerView.setBackgroundColor(mutedColor);
                                         holder.albumName.setTextColor(textColor);
                                         holder.albumDetail.setTextColor(textColor);

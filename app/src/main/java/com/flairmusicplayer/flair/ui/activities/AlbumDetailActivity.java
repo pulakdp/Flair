@@ -20,6 +20,7 @@ import com.flairmusicplayer.flair.models.Album;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
     private void setUpAlbum() {
         final Drawable textDrawable = FlairUtils.getRectTextDrawable(this, album.getAlbumName());
         Glide.with(this)
-                .load(Song.getAlbumArtUri(album.getAlbumId()))
+                .load(MusicUtils.getAlbumArtUri(album.getAlbumId()))
                 .apply(new RequestOptions().error(textDrawable))
                 .into(albumArt);
         albumName.setText(album.getAlbumName());

@@ -22,6 +22,7 @@ import com.flairmusicplayer.flair.models.Artist;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.util.ArrayList;
 
@@ -78,7 +79,7 @@ public class ArtistDetailActivity extends SlidingPanelActivity {
     private void setUpArtist() {
         final Drawable textDrawable = FlairUtils.getRectTextDrawable(this, artist.getArtistName());
         Glide.with(this)
-                .load(Song.getAlbumArtUri(artist.albumsOfArtist.get(0).getAlbumId()))
+                .load(MusicUtils.getAlbumArtUri(artist.albumsOfArtist.get(0).getAlbumId()))
                 .apply(new RequestOptions().error(textDrawable))
                 .into(artistImageView);
         artistNameView.setText(artist.getArtistName());

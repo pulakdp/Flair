@@ -777,7 +777,7 @@ public class FlairMusicService extends Service {
         Bitmap artwork = null;
         try {
             artwork = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                    Song.getAlbumArtUri(currentSong.getAlbumId()));
+                    MusicUtils.getAlbumArtUri(currentSong.getAlbumId()));
         } catch (IOException e) {
             //do nothing
         }

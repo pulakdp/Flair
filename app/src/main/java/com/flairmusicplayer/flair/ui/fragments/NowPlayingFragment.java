@@ -1,5 +1,8 @@
 package com.flairmusicplayer.flair.ui.fragments;
 
+import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -66,33 +69,47 @@ public class NowPlayingFragment extends MusicServiceFragment
     };
     @BindView(R.id.total_time)
     TextView totalPlayTime;
+
     @BindView(R.id.song_title)
     TextView songTitle;
+
     @BindView(R.id.song_artist)
     TextView songArtist;
+
     @BindView(R.id.play_pause_fab)
     FloatingActionButton playPauseFab;
+
     @BindView(R.id.player_repeat_button)
     RepeatButton repeatButton;
+
     @BindView(R.id.player_shuffle_button)
     ShuffleButton shuffleButton;
+
     @BindView(R.id.player_next_button)
     ImageButton nextButton;
+
     @BindView(R.id.player_prev_button)
     ImageButton previousButton;
+
     @BindView(R.id.player_album_art_viewpager)
     ViewPager pager;
+
     @BindView(R.id.queue_toggle)
     ImageButton queueToggle;
+
     @BindView(R.id.scrim_layout)
     FrameLayout scrimLayout;
+
     @BindView(R.id.full_scrim)
     View fullScrim;
+
     @BindView(R.id.playing_queue_rv)
     RecyclerView playingQueueList;
+
     private PlayingQueueAdapter queueAdapter;
     private LinearLayoutManager layoutManager;
     private ArrayList<Song> currentPlayingQueue = new ArrayList<>();
+    private UpdateFavoriteButtonAsyncTask updateFavAsyncTask;
 
     public NowPlayingFragment() {
     }
@@ -183,6 +200,7 @@ public class NowPlayingFragment extends MusicServiceFragment
         super.onMetaChanged();
         setViews();
         updateQueue();
+        updateFavoriteButton();
         if (pager.getAdapter() == null) {
             updateAlbumArtPager();
             repeatButton.updateRepeatState();
@@ -289,6 +307,31 @@ public class NowPlayingFragment extends MusicServiceFragment
         currentPlayTime.setText(MusicUtils.formatTimeToString(position));
     }
 
+    private void updateFavoriteButton() {
+        if (updateFavAsyncTask != null)
+            updateFavAsyncTask.cancel(true);
+        updateFavAsyncTask = new UpdateFavoriteButtonAsyncTask();
+        updateFavAsyncTask.execute(FlairMusicController.getCurrentSong());
+    }
+
+    private void toggleFavorite(Activity activity, Song song) {
+        if (activity != null) {
+            MusicUtils.toggleFavorite(activity, song);
+            updateFavoriteIcon(MusicUtils.isFavorite(activity, song));
+        }
+    }
+
+    private void updateFavoriteIcon(boolean isFavorite) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            int res = isFavorite ? R.drawable.ic_favorite_black_24dp : R.drawable.ic_favorite_border_black_24dp;
+            Drawable drawable = activity.getResources().getDrawable(res);
+            toolbar.getMenu().findItem(R.id.action_toggle_favorite)
+                    .setIcon(drawable)
+                    .setTitle(isFavorite ? getString(R.string.action_remove_from_favorites) : getString(R.string.action_add_to_favorites));
+        }
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (!fromUser)
@@ -330,14 +373,42 @@ public class NowPlayingFragment extends MusicServiceFragment
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         int itemId = item.getItemId();
+        Activity activity = getActivity();
+        Song currentSong = FlairMusicController.getCurrentSong();
+
+        if (activity == null)
+            return false;
+
         switch (itemId) {
+            case R.id.action_toggle_favorite:
+                toggleFavorite(activity, currentSong);
+                break;
             case R.id.action_clear_playing_queue:
                 FlairMusicController.clearQueue();
                 break;
             case R.id.action_equalizer:
-                NavUtils.openEqualizer(getActivity());
+                NavUtils.openEqualizer(activity);
                 break;
         }
         return false;
+    }
+
+    public class UpdateFavoriteButtonAsyncTask extends AsyncTask<Song, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Song... songs) {
+            Activity activity = getActivity();
+            if (activity != null) {
+                return MusicUtils.isFavorite(getActivity(), songs[0]);
+            } else {
+                cancel(false);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isFavorite) {
+            updateFavoriteIcon(isFavorite);
+        }
     }
 }

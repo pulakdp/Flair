@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.util.ArrayList;
 
@@ -89,7 +90,7 @@ public class AlbumArtPagerAdapter extends FragmentStatePagerAdapter {
 
         private void loadAlbumArt() {
             Glide.with(getContext())
-                    .load(Song.getAlbumArtUri(song.getAlbumId()))
+                    .load(MusicUtils.getAlbumArtUri(song.getAlbumId()))
                     .apply(new RequestOptions().error(R.drawable.album_art_placeholder))
                     .into(albumArtView);
         }

@@ -31,6 +31,7 @@ import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.fragments.FoldersFragment;
 import com.flairmusicplayer.flair.ui.fragments.LibraryFragment;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.PreferenceUtils;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -65,6 +66,8 @@ public class MainActivity extends SlidingPanelActivity
         headerViewHolder = new HeaderViewHolder(navigationView.getHeaderView(0));
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Not the best way to ask and handle permissions. Will need improvement in future.
 
         if (FlairUtils.isMarshmallowOrAbove() && !hasPermissions()) {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_FLAIR);
@@ -223,7 +226,7 @@ public class MainActivity extends SlidingPanelActivity
             headerViewHolder.songTitleHeader.setText(currentSong.getTitle());
             headerViewHolder.songArtistHeader.setText(currentSong.getArtistName());
             Glide.with(this)
-                    .load(Song.getAlbumArtUri(currentSong.getAlbumId()))
+                    .load(MusicUtils.getAlbumArtUri(currentSong.getAlbumId()))
                     .apply(new RequestOptions().placeholder(R.drawable.album_art_placeholder))
                     .apply(new RequestOptions().error(R.drawable.album_art_placeholder))
                     .into(headerViewHolder.albumArtHeader);

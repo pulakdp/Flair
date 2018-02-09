@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class PlaylistSongAdapter extends RecyclerView.Adapter<PlaylistSongAdapte
     @Override
     public void onBindViewHolder(PlaylistSongViewHolder holder, int position) {
         String songTitle = playlistSongs.get(position).getTitle();
-        Uri albumArtUri = Song.getAlbumArtUri(playlistSongs.get(position).getAlbumId());
+        Uri albumArtUri = MusicUtils.getAlbumArtUri(playlistSongs.get(position).getAlbumId());
         if (holder.itemTitle != null)
             holder.itemTitle.setText(songTitle);
         if (holder.itemDetailText != null)

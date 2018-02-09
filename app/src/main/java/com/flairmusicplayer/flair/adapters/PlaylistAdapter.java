@@ -56,7 +56,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         if (playlist instanceof AbsSmartPlaylist)
             return ((AbsSmartPlaylist) playlist).getIconRes();
         else
-            return R.drawable.ic_queue_music_black_24dp;
+            return activity.getString(R.string.favorite_playlist).equalsIgnoreCase(playlist.getName()) ?
+                    R.drawable.ic_favorite_black_24dp : R.drawable.ic_queue_music_black_24dp;
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicService;
 import com.flairmusicplayer.flair.ui.activities.MainActivity;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 /**
  * Author: PulakDebasish
@@ -84,7 +85,7 @@ public class BigWidget extends BaseWidget {
 
         try {
             albumArtBitmap = MediaStore.Images.Media.getBitmap(service.getContentResolver(),
-                    Song.getAlbumArtUri(song.getAlbumId()));
+                    MusicUtils.getAlbumArtUri(song.getAlbumId()));
         } catch (Exception e) {
             //do nothing
         }

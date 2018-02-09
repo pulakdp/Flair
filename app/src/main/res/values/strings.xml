@@ -23,5 +23,9 @@
     <string name="playing_notification">Flair Playing Notification</string>
     <string name="widget_big_name">Flair Widget Big</string>
     <string name="need_permission">Flair needs to access external storage to list and play songs</string>
+    <string name="favorite_playlist">Favorites</string>
+
+    <string name="inserted_x_songs_into_playlist_x">Inserted %1$d songs into playlist %2$s</string>
+    <string name="action_remove_from_favorites">Remove from Favorites</string>
 
 </resources>

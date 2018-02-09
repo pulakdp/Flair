@@ -16,6 +16,7 @@ import com.flairmusicplayer.flair.loaders.SongLoader;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -84,7 +85,7 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
             holder.itemImage.setImageResource(R.drawable.ic_folder_black_24dp);
         } else {
             Glide.with(activity)
-                    .load(Song
+                    .load(MusicUtils
                             .getAlbumArtUri(SongLoader
                                     .getSongFromPath(activity, file.getAbsolutePath())
                                     .getAlbumId()))

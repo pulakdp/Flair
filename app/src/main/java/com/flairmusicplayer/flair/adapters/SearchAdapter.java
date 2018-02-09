@@ -17,6 +17,7 @@ import com.flairmusicplayer.flair.models.Artist;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.ui.activities.SearchActivity;
 import com.flairmusicplayer.flair.utils.FlairUtils;
+import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemViewHo
         switch (getItemViewType(position)) {
             case SONG:
                 Song song = (Song) data.get(position);
-                Uri albumArtUri = Song.getAlbumArtUri(song.getAlbumId());
+                Uri albumArtUri = MusicUtils.getAlbumArtUri(song.getAlbumId());
                 final String songTitle = song.getTitle();
                 Glide.with(activity)
                         .load(albumArtUri)

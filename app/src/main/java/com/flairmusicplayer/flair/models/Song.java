@@ -11,6 +11,18 @@ import android.os.Parcelable;
 
 public class Song implements Parcelable {
 
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<Song>() {
+
+        @Override
+        public Song createFromParcel(Parcel parcel) {
+            return new Song(parcel);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
     private final int id;
     private final String title;
     private final long duration;
@@ -19,8 +31,6 @@ public class Song implements Parcelable {
     private final String albumName;
     private final int artistId;
     private final String artistName;
-
-    private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
     public Song() {
         this.id = -1;
@@ -55,9 +65,6 @@ public class Song implements Parcelable {
         artistName = parcel.readString();
     }
 
-    public static Uri getAlbumArtUri(int albumId) {
-        return ContentUris.withAppendedId(sArtworkUri, albumId);
-    }
 
     public int getId() {
         return id;
@@ -104,19 +111,6 @@ public class Song implements Parcelable {
                 ", artistName='" + artistName +
                 '}';
     }
-
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<Song>() {
-
-        @Override
-        public Song createFromParcel(Parcel parcel) {
-            return new Song(parcel);
-        }
-
-        @Override
-        public Song[] newArray(int size) {
-            return new Song[size];
-        }
-    };
 
     @Override
     public int describeContents() {
