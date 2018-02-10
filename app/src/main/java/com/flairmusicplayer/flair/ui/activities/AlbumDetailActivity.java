@@ -21,6 +21,7 @@ import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -103,7 +104,11 @@ public class AlbumDetailActivity extends SlidingPanelActivity {
     @Override
     public void onBackPressed() {
         shuffleFab.setVisibility(View.GONE);
-        super.onBackPressed();
+        if (getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            panel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

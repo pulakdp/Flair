@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.media.audiofx.AudioEffect;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -48,11 +49,14 @@ public class NavUtils {
         activity.startActivity(intent);
     }
 
-    public static void goToAlbum(@NonNull final Activity activity, final Album album, @NonNull ImageView sharedImage) {
+    public static void goToAlbum(@NonNull final Activity activity, final Album album, @Nullable ImageView sharedImage) {
         final Intent intent = new Intent(activity, AlbumDetailActivity.class);
         intent.putExtra(AlbumDetailActivity.EXTRA_ALBUM, album);
 
-        //noinspection unchecked
+        if (sharedImage == null) {
+            activity.startActivity(intent);
+            return;
+        }
         activity.startActivity(intent,
                 ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                         sharedImage,
@@ -60,11 +64,14 @@ public class NavUtils {
                         .toBundle());
     }
 
-    public static void goToArtist(@NonNull final Activity activity, final Artist artist, @NonNull ImageView sharedImage) {
+    public static void goToArtist(@NonNull final Activity activity, final Artist artist, @Nullable ImageView sharedImage) {
         final Intent intent = new Intent(activity, ArtistDetailActivity.class);
         intent.putExtra(ArtistDetailActivity.EXTRA_ARTIST, artist);
 
-        //noinspection unchecked
+        if (sharedImage == null) {
+            activity.startActivity(intent);
+            return;
+        }
         activity.startActivity(intent,
                 ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                         sharedImage,

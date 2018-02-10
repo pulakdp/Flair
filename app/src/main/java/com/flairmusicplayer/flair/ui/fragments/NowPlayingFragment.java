@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -27,12 +28,13 @@ import com.flairmusicplayer.flair.adapters.AlbumArtPagerAdapter;
 import com.flairmusicplayer.flair.adapters.PlayingQueueAdapter;
 import com.flairmusicplayer.flair.customviews.RepeatButton;
 import com.flairmusicplayer.flair.customviews.ShuffleButton;
+import com.flairmusicplayer.flair.loaders.AlbumLoader;
+import com.flairmusicplayer.flair.loaders.ArtistLoader;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.activities.SlidingPanelActivity;
 import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -47,7 +49,8 @@ public class NowPlayingFragment extends MusicServiceFragment
         implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener,
         ViewPager.OnPageChangeListener,
-        Toolbar.OnMenuItemClickListener {
+        Toolbar.OnMenuItemClickListener,
+        PopupMenu.OnMenuItemClickListener {
 
     @BindView(R.id.player_toolbar)
     Toolbar toolbar;
@@ -57,6 +60,7 @@ public class NowPlayingFragment extends MusicServiceFragment
 
     @BindView(R.id.current_time)
     TextView currentPlayTime;
+
     public Runnable progressUpdater = new Runnable() {
         @Override
         public void run() {
@@ -68,6 +72,7 @@ public class NowPlayingFragment extends MusicServiceFragment
                 progressSeekBar.removeCallbacks(this);
         }
     };
+
     @BindView(R.id.total_time)
     TextView totalPlayTime;
 
@@ -97,6 +102,9 @@ public class NowPlayingFragment extends MusicServiceFragment
 
     @BindView(R.id.queue_toggle)
     ImageButton queueToggle;
+
+    @BindView(R.id.more)
+    ImageButton more;
 
     @BindView(R.id.scrim_layout)
     FrameLayout scrimLayout;
@@ -136,6 +144,7 @@ public class NowPlayingFragment extends MusicServiceFragment
         playPauseFab.setOnClickListener(this);
         nextButton.setOnClickListener(this);
         queueToggle.setOnClickListener(this);
+        more.setOnClickListener(this);
         progressSeekBar.setOnSeekBarChangeListener(this);
         pager.addOnPageChangeListener(this);
         currentPlayTime.setText("0:00");
@@ -154,15 +163,6 @@ public class NowPlayingFragment extends MusicServiceFragment
         pager.removeOnPageChangeListener(this);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        SlidingPanelActivity activity = (SlidingPanelActivity) getActivity();
-        if (activity == null)
-            return;
-        if (activity.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
-            activity.setMiniPlayerAlpha(0);
-    }
 
     private void setViews() {
         Song currentSong = FlairMusicController.getCurrentSong();
@@ -279,7 +279,12 @@ public class NowPlayingFragment extends MusicServiceFragment
                     showQueue();
                 else
                     hideQueue();
-
+                break;
+            case R.id.more:
+                PopupMenu popupMenu = new PopupMenu(activity, view);
+                popupMenu.inflate(R.menu.popup_menu_song);
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
         }
     }
 
@@ -386,14 +391,14 @@ public class NowPlayingFragment extends MusicServiceFragment
     public boolean onMenuItemClick(MenuItem item) {
         int itemId = item.getItemId();
         Activity activity = getActivity();
-        Song currentSong = FlairMusicController.getCurrentSong();
+        Song song = FlairMusicController.getCurrentSong();
 
         if (activity == null)
             return false;
 
         switch (itemId) {
             case R.id.action_toggle_favorite:
-                toggleFavorite(activity, currentSong);
+                toggleFavorite(activity, song);
                 break;
             case R.id.action_clear_playing_queue:
                 FlairMusicController.clearQueue();
@@ -401,6 +406,24 @@ public class NowPlayingFragment extends MusicServiceFragment
             case R.id.action_equalizer:
                 NavUtils.openEqualizer(activity);
                 break;
+            case R.id.action_play_next:
+                FlairMusicController.playNext(song);
+                return true;
+            case R.id.action_add_to_queue:
+                FlairMusicController.enqueue(song);
+                return true;
+            case R.id.action_add_to_favorites:
+                MusicUtils.addToFavorite(activity, song);
+                return true;
+            case R.id.action_go_to_album:
+                NavUtils.goToAlbum(activity, AlbumLoader.getAlbum(activity, song.getAlbumId()), null);
+                return true;
+            case R.id.action_go_to_artist:
+                NavUtils.goToArtist(activity, ArtistLoader.getArtist(activity, song.getArtistId()), null);
+                return true;
+            case R.id.action_share:
+                MusicUtils.shareSong(activity, song.getId());
+                return true;
         }
         return false;
     }

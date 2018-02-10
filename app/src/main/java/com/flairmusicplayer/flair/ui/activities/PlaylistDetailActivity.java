@@ -17,6 +17,7 @@ import com.flairmusicplayer.flair.adapters.PlaylistSongAdapter;
 import com.flairmusicplayer.flair.loaders.PlaylistSongLoader;
 import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.models.Song;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -87,6 +88,15 @@ public class PlaylistDetailActivity extends SlidingPanelActivity
     @Override
     protected View createContentView() {
         return wrapSlidingPanel(R.layout.activity_playlist_detail);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            panel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
