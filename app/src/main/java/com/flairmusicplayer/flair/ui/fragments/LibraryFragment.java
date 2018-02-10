@@ -19,6 +19,8 @@ import com.flairmusicplayer.flair.adapters.TabViewPagerAdapter;
 import com.flairmusicplayer.flair.loaders.SongLoader;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.activities.MainActivity;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +41,9 @@ public class LibraryFragment extends MusicServiceFragment
 
     @BindView(R.id.viewpager)
     ViewPager tabPager;
+
+    @BindView(R.id.adView)
+    AdView adView;
 
     @BindView(R.id.shuffle_fab)
     FloatingActionButton shuffleFab;
@@ -77,6 +82,12 @@ public class LibraryFragment extends MusicServiceFragment
             tabPager.setOffscreenPageLimit(2);
             tabPager.addOnPageChangeListener(this);
         }
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(this.getString(R.string.test_device_id))
+                .build();
+
+        adView.loadAd(adRequest);
 
         shuffleFab.setOnClickListener(new View.OnClickListener() {
             @Override
