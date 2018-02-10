@@ -1,8 +1,5 @@
 package com.flairmusicplayer.flair.adapters;
 
-import android.graphics.drawable.Drawable;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,17 +50,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         }
 
         if (holder.itemImage != null)
-            holder.itemImage.setImageDrawable(wrapResWithTint(getResIcon(playlist)));
+            holder.itemImage.setImageResource(getResIcon(playlist));
     }
 
-    private Drawable wrapResWithTint(int resIcon) {
-        Drawable d = VectorDrawableCompat.create(activity.getResources(), resIcon, null);
-        if (d != null) {
-            d = DrawableCompat.wrap(d);
-            DrawableCompat.setTint(d, activity.getResources().getColor(R.color.gray_tint));
-        }
-        return d;
-    }
+//    Had some issues with this so currently not using
+//    private Drawable wrapResWithTint(int resIcon) {
+//        Drawable d = VectorDrawableCompat.create(activity.getResources(), resIcon, null);
+//        if (d != null) {
+//            d = DrawableCompat.wrap(d);
+//            DrawableCompat.setTint(d, activity.getResources().getColor(R.color.gray_tint));
+//        }
+//        return d;
+//    }
 
     private int getResIcon(Playlist playlist) {
 

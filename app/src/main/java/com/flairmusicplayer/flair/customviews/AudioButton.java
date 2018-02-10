@@ -5,8 +5,6 @@ import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.flairmusicplayer.flair.R;
-
 /**
  * Author: PulakDebasish
  */
@@ -19,7 +17,6 @@ public abstract class AudioButton extends AppCompatImageButton implements View.O
     @SuppressWarnings("deprecation")
     public AudioButton(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        setBackground(getResources().getDrawable(R.drawable.selectable_background));
         setOnClickListener(this);
         setOnLongClickListener(this);
     }

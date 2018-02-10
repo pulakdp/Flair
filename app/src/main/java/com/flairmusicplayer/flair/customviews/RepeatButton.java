@@ -27,17 +27,14 @@ public class RepeatButton extends AudioButton {
     public void updateRepeatState() {
         switch (FlairMusicController.getRepeatMode()) {
             case FlairMusicService.REPEAT_MODE_ALL:
-//                setContentDescription(getResources().getString(R.string.accessibility_repeat_all));
                 setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_black_24dp));
                 setAlpha(ACTIVE_ALPHA);
                 break;
             case FlairMusicService.REPEAT_MODE_THIS:
-//                setContentDescription(getResources().getString(R.string.accessibility_repeat_one));
                 setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_one_black_24dp));
                 setAlpha(ACTIVE_ALPHA);
                 break;
             case FlairMusicService.REPEAT_MODE_NONE:
-//                setContentDescription(getResources().getString(R.string.accessibility_repeat));
                 setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_black_24dp));
                 setAlpha(INACTIVE_ALPHA);
                 break;

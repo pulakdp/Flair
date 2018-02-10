@@ -104,7 +104,7 @@ public class FoldersFragment extends MusicServiceFragment
     public void setCrumb(BreadCrumbLayout.Crumb crumb, boolean addToHistory) {
         if (crumb == null) return;
         saveScrollPosition();
-        breadCrumbLayout.setActiveOrAdd(crumb, true);
+        breadCrumbLayout.setActiveOrAdd(crumb, false);
         if (addToHistory) {
             breadCrumbLayout.addHistory(crumb);
         }

@@ -1,8 +1,11 @@
 package com.flairmusicplayer.flair.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -79,10 +82,19 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
         }
     }
 
+    private Drawable wrapResWithTint(int resIcon) {
+        Drawable d = VectorDrawableCompat.create(activity.getResources(), resIcon, null);
+        if (d != null) {
+            d = DrawableCompat.wrap(d);
+            DrawableCompat.setTint(d, activity.getResources().getColor(R.color.gray_tint));
+        }
+        return d;
+    }
+
     @SuppressWarnings("ConstantConditions")
     private void loadFileImage(File file, SongFileViewHolder holder) {
         if (file.isDirectory()) {
-            holder.itemImage.setImageResource(R.drawable.ic_folder_black_24dp);
+            holder.itemImage.setImageDrawable(wrapResWithTint(R.drawable.ic_folder_black_24dp));
         } else {
             Glide.with(activity)
                     .load(MusicUtils

@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical|start"
+    android:background="?attr/selectableItemBackgroundBorderless"
     android:minHeight="@dimen/tab_height"
     android:orientation="horizontal"
     android:paddingEnd="4dp"

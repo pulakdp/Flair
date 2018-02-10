@@ -1,5 +1,6 @@
 package com.flairmusicplayer.flair.ui.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -59,10 +60,19 @@ public class ArtistsFragment extends MusicServiceFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         artistAdapter = new ArtistAdapter((AppCompatActivity) getActivity(), new ArrayList<Artist>());
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), getSpanCountForOrientation());
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
         artistListView.setLayoutManager(layoutManager);
         artistListView.setAdapter(artistAdapter);
+    }
+
+    private int getSpanCountForOrientation() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return 2;
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return 1;
+        }
+        return 1;
     }
 
     @Override
