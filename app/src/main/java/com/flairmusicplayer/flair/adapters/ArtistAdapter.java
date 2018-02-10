@@ -52,11 +52,13 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         String albumOrAlbums = albumCount > 1 ? " Albums" : " Album";
         String songOrSongs = songCount > 1 ? " Songs" : " Song";
 
+        String detailText = albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs;
+
         if (holder.itemTitle != null)
             holder.itemTitle.setText(artistName);
 
         if (holder.itemDetailText != null)
-            holder.itemDetailText.setText(albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs);
+            holder.itemDetailText.setText(detailText);
 
         if (holder.itemImage != null) {
             final TextDrawable textDrawable = FlairUtils.getRoundTextDrawable(activity, artistName);

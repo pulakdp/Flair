@@ -2,6 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="72dp">
 
@@ -73,7 +74,7 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/grey_dark"
+            android:tint="@color/gray_tint"
             app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
 
     </LinearLayout>

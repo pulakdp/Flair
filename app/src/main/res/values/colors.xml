@@ -63,5 +63,6 @@
     <color name="letter_tile_deep_orange_color_dark">@color/orange_dark</color>
     <color name="letter_tile_brown_color_dark">@color/brown_dark</color>
     <color name="toolbar_scrim_start_color">#80FFFFFF</color>
+    <color name="gray_tint">#737373</color>
 
 </resources>
