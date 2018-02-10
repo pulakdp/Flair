@@ -32,6 +32,7 @@ import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.activities.SlidingPanelActivity;
 import com.flairmusicplayer.flair.utils.MusicUtils;
 import com.flairmusicplayer.flair.utils.NavUtils;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -153,6 +154,16 @@ public class NowPlayingFragment extends MusicServiceFragment
         pager.removeOnPageChangeListener(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        SlidingPanelActivity activity = (SlidingPanelActivity) getActivity();
+        if (activity == null)
+            return;
+        if (activity.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
+            activity.setMiniPlayerAlpha(0);
+    }
+
     private void setViews() {
         Song currentSong = FlairMusicController.getCurrentSong();
         if (!new Song().equals(currentSong) && currentSong != null) {
@@ -165,6 +176,7 @@ public class NowPlayingFragment extends MusicServiceFragment
             } else {
                 progressSeekBar.setProgress(0);
             }
+            onPlayStateChanged();
         }
     }
 

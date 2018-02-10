@@ -33,8 +33,8 @@ public abstract class SlidingPanelActivity extends MusicServiceActivity
         setContentView(createContentView());
         ButterKnife.bind(this);
 
-        setUpMiniPlayer();
         setUpPanel();
+        setUpMiniPlayer();
     }
 
     private void setUpMiniPlayer() {
@@ -54,6 +54,7 @@ public abstract class SlidingPanelActivity extends MusicServiceActivity
             public void onGlobalLayout() {
                 panel.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 if (getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    onPanelSlide(panel, 1);
                     onPanelExpanded();
                 } else if (getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                     onPanelCollapsed();
@@ -80,9 +81,11 @@ public abstract class SlidingPanelActivity extends MusicServiceActivity
     }
 
     public void onPanelExpanded() {
+        setMiniPlayerAlpha(0);
     }
 
     public void onPanelCollapsed() {
+        setMiniPlayerAlpha(1);
     }
 
     public void hideBottomBar(final boolean hide) {
