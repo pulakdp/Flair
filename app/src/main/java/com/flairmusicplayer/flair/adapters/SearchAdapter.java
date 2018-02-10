@@ -108,6 +108,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemViewHo
                         .apply(new RequestOptions().circleCrop())
                         .apply(new RequestOptions().error(textDrawable))
                         .into(holder.itemImage);
+                holder.menu.setVisibility(View.INVISIBLE);
                 break;
             case ALBUM:
                 Album album = (Album) data.get(position);
@@ -120,6 +121,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemViewHo
                         .apply(new RequestOptions().circleCrop())
                         .apply(new RequestOptions().error(textDrawable1))
                         .into(holder.itemImage);
+                holder.menu.setVisibility(View.INVISIBLE);
                 break;
             case HEADER:
                 holder.headerTitle.setText(data.get(position).toString());

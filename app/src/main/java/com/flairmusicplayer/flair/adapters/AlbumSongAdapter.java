@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
-import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.MusicUtils;
 
 import java.util.ArrayList;
@@ -53,11 +52,6 @@ public class AlbumSongAdapter extends SongAdapter {
                 itemImage.setVisibility(View.GONE);
             if (itemImageText != null)
                 itemImageText.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onClick(View view) {
-            FlairMusicController.openQueue(songList, getAdapterPosition(), true);
         }
     }
 }

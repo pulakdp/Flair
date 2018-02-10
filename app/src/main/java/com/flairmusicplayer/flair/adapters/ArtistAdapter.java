@@ -1,7 +1,6 @@
 package com.flairmusicplayer.flair.adapters;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -90,8 +89,12 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
 
         public ArtistItemViewHolder(View itemView) {
             super(itemView);
-            if (itemImage != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            if (itemImage != null && FlairUtils.isLollipopOrAbove())
                 itemImage.setTransitionName(activity.getResources().getString(R.string.transition_artist_image));
+
+            if (menu != null) {
+                menu.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override

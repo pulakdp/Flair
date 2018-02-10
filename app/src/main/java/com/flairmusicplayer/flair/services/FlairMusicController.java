@@ -107,6 +107,34 @@ public class FlairMusicController {
             fmService.setPosition(position);
     }
 
+    public static boolean playNext(Song song) {
+        if (fmService != null) {
+            if (getPlayingQueue().size() > 0) {
+                fmService.addSong(getPosition() + 1, song);
+            } else {
+                ArrayList<Song> queue = new ArrayList<>();
+                queue.add(song);
+                openQueue(queue, 0, false);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean enqueue(Song song) {
+        if (fmService != null) {
+            if (getPlayingQueue().size() > 0) {
+                fmService.addSong(song);
+            } else {
+                ArrayList<Song> queue = new ArrayList<>();
+                queue.add(song);
+                openQueue(queue, 0, false);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static void openQueue(final ArrayList<Song> queue, final int startPosition, final boolean startPlaying) {
         if (!tryToHandleOpenPlayingQueue(queue, startPosition, startPlaying) && fmService != null)
             fmService.openQueue(queue, startPosition, startPlaying);

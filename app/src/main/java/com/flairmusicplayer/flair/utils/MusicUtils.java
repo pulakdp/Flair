@@ -2,7 +2,10 @@ package com.flairmusicplayer.flair.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
@@ -28,6 +31,42 @@ public class MusicUtils {
 
     public static Uri getTrackUri(int songId) {
         return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
+    }
+
+    public static void shareSong(final Context context, int songId) {
+
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("audio/*");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, getSongFileUri(context, songId));
+            context.startActivity(Intent.createChooser(shareIntent, "Share"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Uri getSongFileUri(Context context, int songId) {
+
+        final Cursor cursor = context.getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                BaseColumns._ID + "=?",
+                new String[]{String.valueOf(songId)},
+                null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        cursor.moveToFirst();
+        try {
+            Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
+            cursor.close();
+            return uri;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String formatTimeToString(int timeInMillis) {
@@ -73,5 +112,10 @@ public class MusicUtils {
         } else {
             PlaylistUtils.addToPlaylist(context, song, getOrCreateFavoritesPlaylist(context).getId(), false);
         }
+    }
+
+    public static void addToFavorite(@NonNull final Context context, @NonNull final Song song) {
+        if (!isFavorite(context, song))
+            PlaylistUtils.addToPlaylist(context, song, getOrCreateFavoritesPlaylist(context).getId(), false);
     }
 }

@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
+import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
 
@@ -70,7 +71,7 @@ public class PlaylistSongAdapter extends RecyclerView.Adapter<PlaylistSongAdapte
 
         @Override
         public void onClick(View view) {
-            super.onClick(view);
+            FlairMusicController.openQueue(playlistSongs, getAdapterPosition(), true);
         }
     }
 }

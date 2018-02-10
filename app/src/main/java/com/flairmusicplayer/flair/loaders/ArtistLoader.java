@@ -3,6 +3,7 @@ package com.flairmusicplayer.flair.loaders;
 
 import android.content.Context;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.flairmusicplayer.flair.models.Album;
@@ -49,6 +50,15 @@ public class ArtistLoader extends WrappedAsyncTaskLoader<ArrayList<Artist>> {
             }
         }
         return artists;
+    }
+
+    public static Artist getArtist(@NonNull final Context context, int artistId) {
+        ArrayList<Song> songs = SongLoader.getSongsFromCursor(SongLoader.createSongCursor(
+                context,
+                MediaStore.Audio.AudioColumns.ARTIST_ID + "=?",
+                new String[]{String.valueOf(artistId)})
+        );
+        return new Artist(AlbumLoader.splitIntoAlbums(songs));
     }
 
     private static Artist getOrCreateArtist(ArrayList<Artist> artists, int artistId) {

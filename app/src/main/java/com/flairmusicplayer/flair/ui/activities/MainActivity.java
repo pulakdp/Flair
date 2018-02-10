@@ -222,7 +222,7 @@ public class MainActivity extends SlidingPanelActivity
 
     private void setSongDetailsInNavHeader() {
         Song currentSong = FlairMusicController.getCurrentSong();
-        if (currentSong != null) {
+        if (currentSong != null && !currentSong.equals(new Song())) {
             headerViewHolder.songTitleHeader.setText(currentSong.getTitle());
             headerViewHolder.songArtistHeader.setText(currentSong.getArtistName());
             Glide.with(this)
@@ -230,6 +230,10 @@ public class MainActivity extends SlidingPanelActivity
                     .apply(new RequestOptions().placeholder(R.drawable.album_art_placeholder))
                     .apply(new RequestOptions().error(R.drawable.album_art_placeholder))
                     .into(headerViewHolder.albumArtHeader);
+        } else {
+            headerViewHolder.songTitleHeader.setText("");
+            headerViewHolder.songArtistHeader.setText("");
+            headerViewHolder.albumArtHeader.setImageResource(R.drawable.album_art_placeholder);
         }
     }
 
@@ -237,6 +241,7 @@ public class MainActivity extends SlidingPanelActivity
     public void onQueueChanged() {
         super.onQueueChanged();
         hideBottomBar(FlairMusicController.getPlayingQueue().isEmpty());
+        setSongDetailsInNavHeader();
     }
 
     public static class HeaderViewHolder {

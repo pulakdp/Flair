@@ -3,18 +3,24 @@ package com.flairmusicplayer.flair.adapters;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
+import com.flairmusicplayer.flair.loaders.AlbumLoader;
+import com.flairmusicplayer.flair.loaders.ArtistLoader;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
+import com.flairmusicplayer.flair.utils.NavUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
@@ -80,15 +86,60 @@ public class SongAdapter
         notifyDataSetChanged();
     }
 
-    public class SongItemViewHolder extends SingleItemViewHolder {
+    public class SongItemViewHolder extends SingleItemViewHolder implements PopupMenu.OnMenuItemClickListener {
 
         SongItemViewHolder(View itemView) {
             super(itemView);
+
+            if (menu == null)
+                return;
+
+            menu.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            playAll(getAdapterPosition());
+            if (view.getId() != R.id.item_menu)
+                playAll(getAdapterPosition());
+            else {
+                PopupMenu popupMenu = new PopupMenu(activity, view);
+                popupMenu.inflate(R.menu.popup_menu_song);
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
+            }
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            return handleMenuClick(activity, getSong(), item.getItemId());
+        }
+
+        private Song getSong() {
+            return songList.get(getAdapterPosition());
+        }
+
+        private boolean handleMenuClick(@NonNull FragmentActivity activity, @NonNull Song song, int menuItemId) {
+            switch (menuItemId) {
+                case R.id.action_play_next:
+                    FlairMusicController.playNext(song);
+                    return true;
+                case R.id.action_add_to_queue:
+                    FlairMusicController.enqueue(song);
+                    return true;
+                case R.id.action_add_to_favorites:
+                    MusicUtils.addToFavorite(activity, getSong());
+                    return true;
+                case R.id.action_go_to_album:
+                    NavUtils.goToAlbum(activity, AlbumLoader.getAlbum(activity, song.getAlbumId()), itemImage);
+                    return true;
+                case R.id.action_go_to_artist:
+                    NavUtils.goToArtist(activity, ArtistLoader.getArtist(activity, song.getArtistId()), itemImage);
+                    return true;
+                case R.id.action_share:
+                    MusicUtils.shareSong(activity, song.getId());
+                    return true;
+            }
+            return false;
         }
     }
 }

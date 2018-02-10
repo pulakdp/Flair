@@ -47,7 +47,6 @@ import com.flairmusicplayer.flair.utils.NavUtils;
 import com.flairmusicplayer.flair.utils.Stopwatch;
 import com.flairmusicplayer.flair.widgets.BigWidget;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -585,6 +584,18 @@ public class FlairMusicService extends Service {
         }
     }
 
+    public void addSong(Song song) {
+        playingQueue.add(song);
+        originalPlayingQueue.add(song);
+        notifyChange(QUEUE_CHANGED);
+    }
+
+    public void addSong(int position, Song song) {
+        playingQueue.add(position, song);
+        originalPlayingQueue.add(position, song);
+        notifyChange(QUEUE_CHANGED);
+    }
+
     private void prepareNext() {
         musicHandler.removeMessages(PREPARE_NEXT);
         musicHandler.obtainMessage(PREPARE_NEXT).sendToTarget();
@@ -778,7 +789,7 @@ public class FlairMusicService extends Service {
         try {
             artwork = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
                     MusicUtils.getAlbumArtUri(currentSong.getAlbumId()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             //do nothing
         }
 

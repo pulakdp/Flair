@@ -44,6 +44,9 @@ dependencies {
     implementation 'com.github.ksoichiro:android-observablescrollview:1.6.0'
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.google.android.gms:play-services-ads:11.8.0'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
+    implementation 'de.psdev.licensesdialog:licensesdialog:1.8.3'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
         transitive = true
     }
