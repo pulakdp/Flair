@@ -18,6 +18,10 @@ public class PreferenceUtils {
 
     private static final String LAST_FOLDER = "last_folder";
 
+    private static final String START_PAGE_INDEX = "start_page_index";
+
+    private static final String LASTOPENED_IS_START_PAGE = "lastopened_is_start_page";
+
     private static PreferenceUtils instance;
 
     private final SharedPreferences preferences;
@@ -31,6 +35,22 @@ public class PreferenceUtils {
             instance = new PreferenceUtils(context.getApplicationContext());
         }
         return instance;
+    }
+
+    public int getStartPageIndex() {
+        return preferences.getInt(START_PAGE_INDEX, 0);
+    }
+
+    public void setStartPageIndex(final int index) {
+        preferences.edit().putInt(START_PAGE_INDEX, index).apply();
+    }
+
+    public void setLastOpenedAsStartPage(boolean preference) {
+        preferences.edit().putBoolean(LASTOPENED_IS_START_PAGE, preference).apply();
+    }
+
+    public boolean getLastOpenedIsStartPage() {
+        return preferences.getBoolean(LASTOPENED_IS_START_PAGE, true);
     }
 
     public void setActiveFragment(int key) {

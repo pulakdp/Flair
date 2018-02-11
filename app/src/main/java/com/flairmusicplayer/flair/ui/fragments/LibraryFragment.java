@@ -19,6 +19,7 @@ import com.flairmusicplayer.flair.adapters.TabViewPagerAdapter;
 import com.flairmusicplayer.flair.loaders.SongLoader;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.ui.activities.MainActivity;
+import com.flairmusicplayer.flair.utils.PreferenceUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -48,6 +49,8 @@ public class LibraryFragment extends MusicServiceFragment
     @BindView(R.id.shuffle_fab)
     FloatingActionButton shuffleFab;
 
+    private PreferenceUtils preferences;
+
     private Unbinder unbinder;
 
     public LibraryFragment() {
@@ -55,6 +58,13 @@ public class LibraryFragment extends MusicServiceFragment
 
     public static LibraryFragment newInstance() {
         return new LibraryFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        preferences = PreferenceUtils.getInstance(getActivity());
     }
 
     @Nullable
@@ -81,6 +91,8 @@ public class LibraryFragment extends MusicServiceFragment
             setupViewPager(tabPager);
             tabPager.setOffscreenPageLimit(2);
             tabPager.addOnPageChangeListener(this);
+
+            tabPager.setCurrentItem(preferences.getStartPageIndex());
         }
 
         AdRequest adRequest = new AdRequest.Builder()
@@ -95,6 +107,14 @@ public class LibraryFragment extends MusicServiceFragment
                 shuffleAll(getActivity());
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (preferences.getLastOpenedIsStartPage() && tabPager != null) {
+            preferences.setStartPageIndex(tabPager.getCurrentItem());
+        }
     }
 
     @Override

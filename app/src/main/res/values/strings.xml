@@ -8,6 +8,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_shuffle_all">Shuffle all</string>
+    <string name="tab_last_opened">Last opened tab</string>
     <string name="tab_songs">Songs</string>
     <string name="tab_albums">Albums</string>
     <string name="tab_artists">Artists</string>
@@ -28,6 +29,9 @@
     <string name="need_permission">Flair needs to access external storage to list and play songs</string>
     <string name="favorite_playlist">Favorites</string>
 
+    <string name="select_start_page">Select the start page to show when app launches</string>
+    <string name="start_page">Start page</string>
+
     <string name="inserted_x_songs_into_playlist_x">Inserted %1$d songs into playlist %2$s</string>
     <string name="action_remove_from_favorites">Remove from Favorites</string>
     <string name="action_play_next">Play next</string>
@@ -37,5 +41,7 @@
     <string name="action_share">Share</string>
     <string name="share_message">Check out this music player app</string>
     <string name="play_store_link">https://play.google.com/store/apps/details?id=com.flairmusicplayer.flair</string>
+    <string name="library">Library</string>
+    <string name="settings">Settings</string>
 
 </resources>
