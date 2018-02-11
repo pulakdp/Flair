@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.WeakHashMap;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class FlairMusicController {

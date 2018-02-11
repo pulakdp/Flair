@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public abstract class MusicServiceActivity extends AppCompatActivity implements MusicStateChangeListener {

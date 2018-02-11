@@ -10,7 +10,7 @@ import com.flairmusicplayer.flair.utils.PreferenceUtils;
 import java.util.ArrayList;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class RecentlyAddedSongsLoader {

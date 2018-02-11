@@ -9,7 +9,7 @@ import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.services.FlairMusicService;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class RepeatButton extends AudioButton {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class SortedCursor extends AbstractCursor {

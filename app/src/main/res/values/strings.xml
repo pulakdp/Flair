@@ -35,5 +35,7 @@
     <string name="action_go_to_album">Go to album</string>
     <string name="action_go_to_artist">Go to artist</string>
     <string name="action_share">Share</string>
+    <string name="share_message">Check out this music player app</string>
+    <string name="play_store_link">https://play.google.com/store/apps/details?id=com.flairmusicplayer.flair</string>
 
 </resources>

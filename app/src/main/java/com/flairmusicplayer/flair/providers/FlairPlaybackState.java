@@ -16,7 +16,7 @@ import com.flairmusicplayer.flair.models.Song;
 import java.util.ArrayList;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class FlairPlaybackState extends SQLiteOpenHelper {

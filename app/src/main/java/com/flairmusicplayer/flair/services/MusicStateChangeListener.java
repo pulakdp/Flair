@@ -1,7 +1,7 @@
 package com.flairmusicplayer.flair.services;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public interface MusicStateChangeListener {

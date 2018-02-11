@@ -16,7 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, kabouzeid
  */
 
 public abstract class SlidingPanelActivity extends MusicServiceActivity

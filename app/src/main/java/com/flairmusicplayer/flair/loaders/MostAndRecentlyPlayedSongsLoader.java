@@ -13,7 +13,7 @@ import com.flairmusicplayer.flair.providers.SongPlayCount;
 import java.util.ArrayList;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class MostAndRecentlyPlayedSongsLoader {

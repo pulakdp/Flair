@@ -20,7 +20,7 @@ import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, kabouzeid
  */
 
 public class BigWidget extends BaseWidget {

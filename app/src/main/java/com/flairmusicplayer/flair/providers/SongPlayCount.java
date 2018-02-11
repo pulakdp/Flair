@@ -9,7 +9,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public class SongPlayCount extends SQLiteOpenHelper {

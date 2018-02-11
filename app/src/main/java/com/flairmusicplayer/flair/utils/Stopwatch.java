@@ -3,7 +3,7 @@ package com.flairmusicplayer.flair.utils;
 import java.util.Locale;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, kabouzeid
  */
 
 public class Stopwatch {

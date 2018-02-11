@@ -10,7 +10,7 @@ import com.flairmusicplayer.flair.services.MusicStateChangeListener;
 import com.flairmusicplayer.flair.ui.activities.MusicServiceActivity;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, Andrew Neal
  */
 
 public abstract class MusicServiceFragment extends Fragment implements MusicStateChangeListener {

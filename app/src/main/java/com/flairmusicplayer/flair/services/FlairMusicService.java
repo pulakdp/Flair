@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import timber.log.Timber;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, kabouzeid, Andrew Neal
  */
 
 public class FlairMusicService extends Service {
@@ -107,7 +107,6 @@ public class FlairMusicService extends Service {
     private static final int NOTIFY_MODE_FOREGROUND = 1;
     private static final int NOTIFY_MODE_BACKGROUND = 2;
 
-    private static final int IDLE_DELAY = 5 * 60 * 1000;
     private static final long REWIND_INSTEAD_PREVIOUS_THRESHOLD = 2000;
 
     private BigWidget bigWidget = BigWidget.getInstance();
@@ -124,13 +123,9 @@ public class FlairMusicService extends Service {
     private ArrayList<Song> originalPlayingQueue = new ArrayList<>();
     private AudioManager audioManager;
     private MediaSessionCompat mediaSession;
-    private PowerManager.WakeLock wakeLock;
     private HandlerThread musicPlayerHandlerThread;
     private MusicHandler musicHandler;
     private final AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onAudioFocusChange(final int focusChange) {
             musicHandler.obtainMessage(FOCUS_CHANGE, focusChange, 0).sendToTarget();
@@ -151,7 +146,6 @@ public class FlairMusicService extends Service {
 
     private int currentPos = -1;
     private int nextPos = -1;
-    private boolean isServiceBound;
     private int shuffleMode;
     private int repeatMode;
     private boolean queuesRestored;
@@ -163,18 +157,11 @@ public class FlairMusicService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Timber.d("Service Bound. Intent = %s", intent);
-        isServiceBound = true;
         return musicBinder;
     }
 
     @Override
-    public void onRebind(Intent intent) {
-        isServiceBound = true;
-    }
-
-    @Override
     public boolean onUnbind(Intent intent) {
-        isServiceBound = false;
         return true;
     }
 
@@ -290,14 +277,6 @@ public class FlairMusicService extends Service {
                 return super.onMediaButtonEvent(mediaButtonEvent);
             }
         });
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                0,
-                new Intent(this, MediaButtonIntentReceiver.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        mediaSession.setMediaButtonReceiver(pendingIntent);
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-                | MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
     }
 
     private void saveQueuesImpl() {
@@ -1052,21 +1031,21 @@ public class FlairMusicService extends Service {
             return whereto;
         }
 
-        public void setVolume(final float vol) {
-            currentMediaPlayer.setVolume(vol, vol);
-        }
+//        public void setVolume(final float vol) {
+//            currentMediaPlayer.setVolume(vol, vol);
+//        }
 
         public int getAudioSessionId() {
             return currentMediaPlayer.getAudioSessionId();
         }
 
-        public void setAudioSessionId(final int sessionId) {
-            try {
-                currentMediaPlayer.setAudioSessionId(sessionId);
-            } catch (Exception e) {
-                Timber.e("Couldn't set audio session id. Message: %s", e.getMessage());
-            }
-        }
+//        public void setAudioSessionId(final int sessionId) {
+//            try {
+//                currentMediaPlayer.setAudioSessionId(sessionId);
+//            } catch (Exception e) {
+//                Timber.e("Couldn't set audio session id. Message: %s", e.getMessage());
+//            }
+//        }
 
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {

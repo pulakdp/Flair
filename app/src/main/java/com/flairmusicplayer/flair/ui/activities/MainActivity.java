@@ -189,9 +189,25 @@ public class MainActivity extends SlidingPanelActivity
 
         } else if (id == R.id.nav_about) {
 
+        } else if (id == R.id.share_app) {
+            startShareIntent();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startShareIntent() {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
+            String messageString = getString(R.string.share_message) + "\n";
+            messageString = messageString + getString(R.string.play_store_link);
+            i.putExtra(Intent.EXTRA_TEXT, messageString);
+            startActivity(Intent.createChooser(i, "Share via"));
+        } catch (Exception e) {
+            //e.toString();
+        }
     }
 
 

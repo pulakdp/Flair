@@ -8,7 +8,7 @@ import android.view.View;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, kabouzeid
  */
 
 public class SwipeController implements View.OnTouchListener {
