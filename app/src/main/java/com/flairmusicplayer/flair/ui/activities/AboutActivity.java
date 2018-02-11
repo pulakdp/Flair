@@ -40,7 +40,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     private void setUpToolbar() {
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle("About App");
+        getSupportActionBar().setTitle(R.string.about_app);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

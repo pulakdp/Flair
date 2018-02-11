@@ -17,12 +17,11 @@ import com.flairmusicplayer.flair.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Author: PulakDebasish
+ * Author: PulakDebasish, kabouzeid
  */
 
 public class BreadCrumbLayout extends HorizontalScrollView implements View.OnClickListener {
@@ -71,29 +70,6 @@ public class BreadCrumbLayout extends HorizontalScrollView implements View.OnCli
 
     public void addHistory(Crumb crumb) {
         history.add(crumb);
-    }
-
-    public Crumb lastHistory() {
-        if (history.size() == 0) return null;
-        return history.get(history.size() - 1);
-    }
-
-    public boolean popHistory() {
-        if (history.size() == 0) return false;
-        history.remove(history.size() - 1);
-        return history.size() != 0;
-    }
-
-    public int historySize() {
-        return history.size();
-    }
-
-    public void clearHistory() {
-        history.clear();
-    }
-
-    public void reverseHistory() {
-        Collections.reverse(history);
     }
 
     public void addCrumb(@NonNull Crumb crumb, boolean refreshLayout) {
@@ -151,43 +127,6 @@ public class BreadCrumbLayout extends HorizontalScrollView implements View.OnCli
             Crumb crumb = currentCrumbs.get(i);
             invalidateActivated(childFrame.getChildAt(i), active == currentCrumbs.indexOf(crumb), false, i < currentCrumbs.size() - 1).setText(crumb.getTitle());
         }
-    }
-
-    void removeCrumbAt(int index) {
-        currentCrumbs.remove(index);
-        childFrame.removeViewAt(index);
-    }
-
-    public boolean trim(String path, boolean dir) {
-        if (!dir) return false;
-        int index = -1;
-        for (int i = currentCrumbs.size() - 1; i >= 0; i--) {
-            File fi = currentCrumbs.get(i).getFile();
-            if (fi.getPath().equals(path)) {
-                index = i;
-                break;
-            }
-        }
-
-        boolean removedActive = index >= active;
-        if (index > -1) {
-            while (index <= currentCrumbs.size() - 1)
-                removeCrumbAt(index);
-            if (childFrame.getChildCount() > 0) {
-                int lastIndex = currentCrumbs.size() - 1;
-                invalidateActivated(childFrame.getChildAt(lastIndex), active == lastIndex, false, false);
-            }
-        }
-        return removedActive || currentCrumbs.size() == 0;
-    }
-
-    public boolean trim(File file) {
-        return trim(file.getPath(), file.isDirectory());
-    }
-
-    void updateIndices() {
-        for (int i = 0; i < childFrame.getChildCount(); i++)
-            childFrame.getChildAt(i).setTag(i);
     }
 
     public void setActiveOrAdd(@NonNull Crumb crumb, boolean forceRecreate) {
