@@ -38,6 +38,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent"/>
         <activity android:name=".ui.activities.SettingsActivity"/>
+        <activity android:name=".ui.activities.AboutActivity"/>
 
         <service
             android:name=".services.FlairMusicService"

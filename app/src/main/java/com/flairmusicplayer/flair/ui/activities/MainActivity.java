@@ -188,7 +188,7 @@ public class MainActivity extends SlidingPanelActivity
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_about) {
-
+            startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.share_app) {
             startShareIntent();
         }
