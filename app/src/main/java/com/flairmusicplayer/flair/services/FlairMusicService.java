@@ -831,6 +831,10 @@ public class FlairMusicService extends Service {
     }
 
     private void updateNotification() {
+
+        if (getCurrentSong().getId() == -1)
+            return;
+
         int newNotifyMode;
         if (isPlaying()) {
             newNotifyMode = NOTIFY_MODE_FOREGROUND;
@@ -854,7 +858,6 @@ public class FlairMusicService extends Service {
     private void cancelNotification() {
         stopForeground(true);
         notificationManager.cancel(NOTIFICATION_ID);
-        notifyMode = NOTIFY_MODE_BACKGROUND;
     }
 
     private PendingIntent retrievePlaybackAction(final String action) {
