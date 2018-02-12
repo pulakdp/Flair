@@ -250,6 +250,8 @@ public class BreadCrumbLayout extends HorizontalScrollView implements View.OnCli
 
     public static class Crumb implements Parcelable {
 
+        public static final String ROOT_DIR = "root";
+
         public Crumb(File file) {
             this.file = file;
         }
@@ -266,7 +268,7 @@ public class BreadCrumbLayout extends HorizontalScrollView implements View.OnCli
         }
 
         public String getTitle() {
-            return file.getPath().equals("/") ? "root" : file.getName();
+            return file.getPath().equals("/") ? ROOT_DIR : file.getName();
         }
 
         public File getFile() {
@@ -277,14 +279,6 @@ public class BreadCrumbLayout extends HorizontalScrollView implements View.OnCli
         public boolean equals(Object o) {
             return (o instanceof Crumb) && ((Crumb) o).getFile() != null &&
                     ((Crumb) o).getFile().equals(getFile());
-        }
-
-        @Override
-        public String toString() {
-            return "Crumb{" +
-                    "file=" + file +
-                    ", scrollPos=" + scrollPos +
-                    '}';
         }
 
         @Override

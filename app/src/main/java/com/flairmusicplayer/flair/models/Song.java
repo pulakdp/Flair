@@ -97,20 +97,6 @@ public class Song implements Parcelable {
     }
 
     @Override
-    public String toString() {
-        return "Song{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", duration=" + duration +
-                ", trackNumber=" + trackNumber +
-                ", albumId=" + albumId +
-                ", albumName='" + albumName + '\'' +
-                ", artistId=" + artistId +
-                ", artistName='" + artistName +
-                '}';
-    }
-
-    @Override
     public int describeContents() {
         return 0;
     }

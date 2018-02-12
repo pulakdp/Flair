@@ -38,9 +38,9 @@ public class ArtistAlbumAdapter extends AlbumAdapter {
         int songCount = albumList.get(position).getSongCount();
         String songCountString;
         if (songCount > 1)
-            songCountString = songCount + " Songs";
+            songCountString = songCount + ArtistAdapter.SONGS;
         else
-            songCountString = songCount + " Song";
+            songCountString = songCount + ArtistAdapter.SONG;
 
         holder.albumDetail.setText(songCountString);
     }

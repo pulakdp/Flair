@@ -240,7 +240,7 @@ public class FlairMusicService extends Service {
     }
 
     public void setupMediaSession() {
-        mediaSession = new MediaSessionCompat(this, "Flair");
+        mediaSession = new MediaSessionCompat(this, getApplicationContext().getString(R.string.app_name));
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public void onPlay() {
@@ -392,13 +392,13 @@ public class FlairMusicService extends Service {
         final Intent intent = new Intent(what.replace(FLAIR_PACKAGE_NAME, MUSIC_PACKAGE_NAME));
         final Song song = getCurrentSong();
 
-        intent.putExtra("id", song.getId());
-        intent.putExtra("track", song.getTitle());
-        intent.putExtra("album", song.getAlbumName());
-        intent.putExtra("artist", song.getArtistName());
-        intent.putExtra("duration", song.getDuration());
-        intent.putExtra("position", getSongProgress());
-        intent.putExtra("playing", isPlaying());
+        intent.putExtra(getString(R.string.song_id), song.getId());
+        intent.putExtra(getString(R.string.song_name), song.getTitle());
+        intent.putExtra(getString(R.string.song_album), song.getAlbumName());
+        intent.putExtra(getString(R.string.song_artist), song.getArtistName());
+        intent.putExtra(getString(R.string.song_duration), song.getDuration());
+        intent.putExtra(getString(R.string.song_position), getSongProgress());
+        intent.putExtra(getString(R.string.song_playing), isPlaying());
 
         sendStickyBroadcast(intent);
     }
@@ -497,7 +497,7 @@ public class FlairMusicService extends Service {
                     notifyChange(PLAY_STATE_CHANGED);
                 }
             } else
-                Toast.makeText(getApplicationContext(), "Failed to acquire audio focus", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.failed_to_acquire_audio_focus, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -559,7 +559,7 @@ public class FlairMusicService extends Service {
         if (openTrackAndPrepareNextAt(position)) {
             play();
         } else {
-            Toast.makeText(this, "Couldn't play file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.could_not_play, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -801,7 +801,7 @@ public class FlairMusicService extends Service {
         if (artwork != null && FlairUtils.isLollipopOrAbove())
             builder.setColor(Palette.from(artwork)
                     .generate()
-                    .getVibrantColor(Color.parseColor("#403f4d")));
+                    .getVibrantColor(Color.parseColor(getString(R.string.default_notification_color))));
 
         if (FlairUtils.isOreo())
             builder.setColorized(true);
@@ -911,7 +911,7 @@ public class FlairMusicService extends Service {
             try {
                 player.reset();
                 player.setOnPreparedListener(null);
-                if (path.startsWith("content://")) {
+                if (path.startsWith(context.getString(R.string.content_path))) {
                     player.setDataSource(context, Uri.parse(path));
                 } else {
                     player.setDataSource(path);
@@ -1074,7 +1074,7 @@ public class FlairMusicService extends Service {
             currentMediaPlayer = new MediaPlayer();
             currentMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
             if (context != null)
-                Toast.makeText(context, "Couldn't play song", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.could_not_play), Toast.LENGTH_SHORT).show();
             return false;
         }
     }

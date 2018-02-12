@@ -26,6 +26,11 @@ import java.util.ArrayList;
 public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.ArtistItemViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
 
+    public static final String SONG = " Song";
+    public static final String SONGS = " Songs";
+    public static final String ALBUM = " Album";
+    public static final String ALBUMS = " Albums";
+
     private ArrayList<Artist> artists;
     private AppCompatActivity activity;
 
@@ -48,8 +53,8 @@ public class ArtistAdapter extends FastScrollRecyclerView.Adapter<ArtistAdapter.
         String bulletChar = " \u2022 ";
         int albumCount = artists.get(position).getAlbumCount();
         int songCount = artists.get(position).getSongCount();
-        String albumOrAlbums = albumCount > 1 ? " Albums" : " Album";
-        String songOrSongs = songCount > 1 ? " Songs" : " Song";
+        String albumOrAlbums = albumCount > 1 ? ALBUMS : ALBUM;
+        String songOrSongs = songCount > 1 ? SONGS : SONG;
 
         String detailText = albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs;
 

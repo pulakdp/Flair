@@ -57,5 +57,22 @@
     <string name="item_image">Item Image</string>
     <string name="menu">Menu</string>
     <string name="queue_toggle">Queue Toggle</string>
+    <string name="song_id">id</string>
+    <string name="song_name">track</string>
+    <string name="song_album">album</string>
+    <string name="song_artist">artist</string>
+    <string name="song_duration">duration</string>
+    <string name="song_position">position</string>
+    <string name="song_playing">playing</string>
+    <string name="failed_to_acquire_audio_focus">Failed to acquire audio focus</string>
+    <string name="could_not_play">Couldn\'t play file</string>
+    <string name="default_notification_color">#403f4d</string>
+    <string name="content_path">content://</string>
+    <string name="app_package">package</string>
+    <string name="chooser_title">Share via</string>
+    <string name="no_audio_id">No audio id</string>
+    <string name="no_equalizer_found">No equalizer found</string>
+    <string name="external">external</string>
+    <string name="content_media">content://media</string>
 
 </resources>

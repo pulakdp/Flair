@@ -92,7 +92,7 @@ public class MainActivity extends SlidingPanelActivity
                         Toast.makeText(getApplicationContext(), R.string.need_permission, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                        Uri uri = Uri.fromParts(getString(R.string.app_package), this.getPackageName(), null);
                         intent.setData(uri);
                         startActivity(intent);
                     }
@@ -204,7 +204,7 @@ public class MainActivity extends SlidingPanelActivity
             String messageString = getString(R.string.share_message) + "\n";
             messageString = messageString + getString(R.string.play_store_link);
             i.putExtra(Intent.EXTRA_TEXT, messageString);
-            startActivity(Intent.createChooser(i, "Share via"));
+            startActivity(Intent.createChooser(i, getString(R.string.chooser_title)));
         } catch (Exception e) {
             //e.toString();
         }

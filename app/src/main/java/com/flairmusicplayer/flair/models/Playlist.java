@@ -35,14 +35,6 @@ public class Playlist implements Parcelable {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return "Playlist{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
     public static final Creator<Playlist> CREATOR = new Parcelable.Creator<Playlist>() {
 
         @Override

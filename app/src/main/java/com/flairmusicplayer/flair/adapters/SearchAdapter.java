@@ -97,8 +97,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemViewHo
                 String bulletChar = " \u2022 ";
                 int albumCount = artist.getAlbumCount();
                 int songCount = artist.getSongCount();
-                String albumOrAlbums = albumCount > 1 ? " Albums" : " Album";
-                String songOrSongs = songCount > 1 ? " Songs" : " Song";
+                String albumOrAlbums = albumCount > 1 ? ArtistAdapter.ALBUMS : ArtistAdapter.ALBUM;
+                String songOrSongs = songCount > 1 ? ArtistAdapter.SONGS : ArtistAdapter.SONG;
                 holder.itemTitle.setText(artistName);
                 String detailText = albumCount + albumOrAlbums + bulletChar + songCount + songOrSongs;
                 holder.itemDetailText.setText(detailText);

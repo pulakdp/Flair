@@ -42,8 +42,7 @@ public class PlaylistUtils {
                             EXTERNAL_CONTENT_URI,
                             values);
                     if (uri != null) {
-                        // Necessary because somehow the MediaStoreObserver is not notified when adding a playlist
-                        context.getContentResolver().notifyChange(Uri.parse("content://media"), null);
+                        context.getContentResolver().notifyChange(Uri.parse(context.getString(R.string.content_media)), null);
                         Timber.d("Created playlist: %s", name);
                         id = Integer.parseInt(uri.getLastPathSegment());
                     }
@@ -69,7 +68,7 @@ public class PlaylistUtils {
         if (playlistId != -1) {
             try {
                 Cursor c = context.getContentResolver().query(
-                        MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId),
+                        MediaStore.Audio.Playlists.Members.getContentUri(context.getString(R.string.external), playlistId),
                         new String[]{MediaStore.Audio.Playlists.Members.AUDIO_ID}, MediaStore.Audio.Playlists.Members.AUDIO_ID + "=?", new String[]{String.valueOf(songId)}, null);
                 int count = 0;
                 if (c != null) {
@@ -95,7 +94,7 @@ public class PlaylistUtils {
         final String[] projection = new String[]{
                 "max(" + MediaStore.Audio.Playlists.Members.PLAY_ORDER + ")",
         };
-        final Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+        final Uri uri = MediaStore.Audio.Playlists.Members.getContentUri(context.getString(R.string.external), playlistId);
         Cursor cursor = null;
         int base = 0;
 
@@ -141,7 +140,7 @@ public class PlaylistUtils {
 
     public static void removeFromPlaylist(@NonNull final Context context, @NonNull final Song song, int playlistId) {
         Uri uri = MediaStore.Audio.Playlists.Members.getContentUri(
-                "external", playlistId);
+                context.getString(R.string.external), playlistId);
         String selection = MediaStore.Audio.Playlists.Members.AUDIO_ID + " =?";
         String[] selectionArgs = new String[]{String.valueOf(song.getId())};
 

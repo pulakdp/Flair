@@ -7,6 +7,7 @@ import android.provider.MediaStore.Audio.AudioColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.AbsSmartPlaylist;
 import com.flairmusicplayer.flair.models.Playlist;
 import com.flairmusicplayer.flair.models.Song;
@@ -25,7 +26,7 @@ public class PlaylistSongLoader extends WrappedAsyncTaskLoader<ArrayList<Song>> 
     public static Cursor makePlaylistSongCursor(@NonNull final Context context, final int playlistId) {
         try {
             return context.getContentResolver().query(
-                    MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId),
+                    MediaStore.Audio.Playlists.Members.getContentUri(context.getString(R.string.external), playlistId),
                     new String[]{
                             MediaStore.Audio.Playlists.Members.AUDIO_ID,// 0
                             AudioColumns.TITLE, // 1
