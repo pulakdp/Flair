@@ -74,5 +74,7 @@
     <string name="no_equalizer_found">No equalizer found</string>
     <string name="external">external</string>
     <string name="content_media">content://media</string>
+    <string name="time_zero">0:00</string>
+    <string name="shuffle_all">Shuffle All</string>
 
 </resources>

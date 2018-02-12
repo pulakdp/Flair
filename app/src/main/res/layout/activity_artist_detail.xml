@@ -52,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -90,7 +90,6 @@
             android:id="@+id/artist_album_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="164dp"
-            android:layout_marginLeft="2dp"
             android:layout_marginStart="2dp"
             android:paddingTop="10dp"/>
 
@@ -114,6 +113,7 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|right|end"
         app:srcCompat="@drawable/ic_shuffle_black_24dp"
+        android:contentDescription="@string/shuffle_all"
         tools:ignore="UnusedAttribute"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -147,8 +147,8 @@ public class NowPlayingFragment extends MusicServiceFragment
         more.setOnClickListener(this);
         progressSeekBar.setOnSeekBarChangeListener(this);
         pager.addOnPageChangeListener(this);
-        currentPlayTime.setText("0:00");
-        totalPlayTime.setText("0:00");
+        currentPlayTime.setText(R.string.time_zero);
+        totalPlayTime.setText(R.string.time_zero);
         setUpToolbar();
         setUpRecyclerView();
     }
