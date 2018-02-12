@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "420380086199",
+    "firebase_url": "https://flair-8bfad.firebaseio.com",
+    "project_id": "flair-8bfad",
+    "storage_bucket": "flair-8bfad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420380086199:android:3ad331f9fd5b740e",
+        "android_client_info": {
+          "package_name": "com.flairmusicplayer.flair"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420380086199-9p556vjp6286ustg2fbg1r85d31p81uj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flairmusicplayer.flair",
+            "certificate_hash": "f1228e95c540fecb47ed4d9fd05b160c62e52e67"
+          }
+        },
+        {
+          "client_id": "420380086199-tijriphk0qs4ek83ngtobvj3djm9ta45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZBleGgTIW4GiL36f4sKh-J3WseDm5dOw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420380086199-tijriphk0qs4ek83ngtobvj3djm9ta45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
