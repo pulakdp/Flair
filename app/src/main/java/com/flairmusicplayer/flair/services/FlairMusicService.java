@@ -39,7 +39,7 @@ import android.widget.Toast;
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.providers.FlairPlaybackState;
-import com.flairmusicplayer.flair.providers.RecentStore;
+import com.flairmusicplayer.flair.providers.RecentStoreContract;
 import com.flairmusicplayer.flair.providers.SongPlayCount;
 import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
@@ -358,7 +358,10 @@ public class FlairMusicService extends Service {
                 updateNotification();
                 savePosition();
                 saveSongProgress();
-                RecentStore.getInstance(this).addSongId(getCurrentSong().getId());
+                //Replacement
+                Uri uri = RecentStoreContract.RecentStoreColumns.buildSongUri(getCurrentSong().getId());
+                getContentResolver().insert(uri, null);
+//                RecentStore.getInstance(this).addSongId(getCurrentSong().getId());
                 if (songPlayCountHelper.shouldBumpPlayCount()) {
                     SongPlayCount.getInstance(this).bumpSongCount(songPlayCountHelper.getSong().getId());
                 }
