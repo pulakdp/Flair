@@ -1,6 +1,7 @@
 package com.flairmusicplayer.flair.ui.activities;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -50,6 +51,7 @@ public class SearchActivity extends MusicServiceActivity
     private SearchAdapter adapter;
     private String queryString;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

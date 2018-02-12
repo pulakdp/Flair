@@ -14,9 +14,9 @@ android {
     }
     signingConfigs {
         release {
-            keyAlias 'pulak'
+            keyAlias 'key_flair'
             keyPassword 'flairapp'
-            storeFile file('/flair_keystore.jks')
+            storeFile file('flair_keystore.jks')
             storePassword 'flairapp'
         }
     }

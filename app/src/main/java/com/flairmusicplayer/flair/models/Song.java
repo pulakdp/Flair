@@ -1,7 +1,5 @@
 package com.flairmusicplayer.flair.models;
 
-import android.content.ContentUris;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 

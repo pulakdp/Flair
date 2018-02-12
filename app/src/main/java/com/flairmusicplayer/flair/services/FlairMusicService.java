@@ -777,7 +777,7 @@ public class FlairMusicService extends Service {
                     .getDrawable(R.drawable.album_art_placeholder));
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_music_note_black_24dp)
                 .setLargeIcon(artwork)
                 .setContentIntent(clickIntent)
                 .setContentTitle(currentSong.getTitle())

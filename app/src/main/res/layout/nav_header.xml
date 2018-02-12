@@ -10,6 +10,7 @@
         android:id="@+id/album_art_header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/album_art"
         android:scaleType="centerCrop"
         android:src="@drawable/album_art_placeholder"/>
 

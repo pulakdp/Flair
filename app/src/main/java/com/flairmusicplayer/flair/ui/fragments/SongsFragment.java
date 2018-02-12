@@ -107,13 +107,6 @@ public class SongsFragment extends MusicServiceFragment
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        songList.addOnScrollListener(null);
-        unbinder.unbind();
-    }
-
-    @Override
     public Loader<ArrayList<Song>> onCreateLoader(int id, Bundle args) {
         return new SongLoader(getActivity());
     }

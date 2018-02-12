@@ -1,5 +1,6 @@
 package com.flairmusicplayer.flair.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ public class SwipeController implements View.OnTouchListener {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         return gestureDetector.onTouchEvent(motionEvent);

@@ -27,6 +27,7 @@
                 android:id="@+id/album_art"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/album_art"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/album_art_placeholder"
@@ -98,6 +99,7 @@
         android:visibility="visible"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|right|end"
-        app:srcCompat="@drawable/ic_shuffle_black_24dp"/>
+        app:srcCompat="@drawable/ic_shuffle_black_24dp"
+        tools:ignore="UnusedAttribute"/>
 
 </android.support.design.widget.CoordinatorLayout>

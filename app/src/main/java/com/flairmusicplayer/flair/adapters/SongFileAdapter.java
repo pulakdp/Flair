@@ -4,22 +4,29 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flairmusicplayer.flair.R;
+import com.flairmusicplayer.flair.loaders.AlbumLoader;
+import com.flairmusicplayer.flair.loaders.ArtistLoader;
 import com.flairmusicplayer.flair.loaders.SongLoader;
 import com.flairmusicplayer.flair.models.Song;
 import com.flairmusicplayer.flair.services.FlairMusicController;
 import com.flairmusicplayer.flair.utils.FlairUtils;
 import com.flairmusicplayer.flair.utils.MusicUtils;
+import com.flairmusicplayer.flair.utils.NavUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -72,6 +79,9 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
     @Override
     public void onBindViewHolder(SongFileViewHolder holder, int position) {
         final File file = files.get(position);
+
+        if (holder.menu != null && file.isDirectory())
+            holder.menu.setVisibility(View.INVISIBLE);
 
         if (holder.itemTitle != null) {
             holder.itemTitle.setText(getFileTitle(file));
@@ -185,16 +195,27 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
         }
     }
 
-    public class SongFileViewHolder extends SingleItemViewHolder {
+    public class SongFileViewHolder extends SingleItemViewHolder implements PopupMenu.OnMenuItemClickListener {
         public SongFileViewHolder(View itemView) {
             super(itemView);
             if (itemDetailText != null)
                 itemDetailText.setVisibility(View.GONE);
+
+            if (menu != null)
+                menu.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            Timber.d("onClick at %d", getAdapterPosition());
+
+            if (view.getId() == R.id.item_menu) {
+                PopupMenu popupMenu = new PopupMenu(activity, view);
+                popupMenu.inflate(R.menu.popup_menu_song);
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
+                return;
+            }
+
             final File file = files.get(getAdapterPosition());
             if (file.isDirectory()) {
                 listener.onFileSelected(files.get(getAdapterPosition()));
@@ -223,6 +244,41 @@ public class SongFileAdapter extends RecyclerView.Adapter<SongFileAdapter.SongFi
                     }
                 }, 100);
             }
+        }
+
+        private Song getSong() {
+            File file = files.get(getAdapterPosition());
+            return SongLoader.getSongFromPath(activity,
+                    file.getAbsolutePath());
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            return handleMenuClick(activity, getSong(), item.getItemId());
+        }
+
+        private boolean handleMenuClick(@NonNull FragmentActivity activity, @NonNull Song song, int menuItemId) {
+            switch (menuItemId) {
+                case R.id.action_play_next:
+                    FlairMusicController.playNext(song);
+                    return true;
+                case R.id.action_add_to_queue:
+                    FlairMusicController.enqueue(song);
+                    return true;
+                case R.id.action_add_to_favorites:
+                    MusicUtils.addToFavorite(activity, getSong());
+                    return true;
+                case R.id.action_go_to_album:
+                    NavUtils.goToAlbum(activity, AlbumLoader.getAlbum(activity, song.getAlbumId()), itemImage);
+                    return true;
+                case R.id.action_go_to_artist:
+                    NavUtils.goToArtist(activity, ArtistLoader.getArtist(activity, song.getArtistId()), itemImage);
+                    return true;
+                case R.id.action_share:
+                    MusicUtils.shareSong(activity, song.getId());
+                    return true;
+            }
+            return false;
         }
     }
 }

@@ -22,6 +22,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:background="@drawable/ripple_effect"
+            android:contentDescription="@string/queue_toggle"
             android:padding="22dp"
             app:srcCompat="@drawable/ic_queue_music_black_24dp"/>
 
@@ -36,9 +37,9 @@
                 android:id="@+id/song_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="2"
-                android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"/>
 
@@ -46,8 +47,8 @@
                 android:id="@+id/song_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
                 android:ellipsize="end"
+                android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"/>
@@ -61,6 +62,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="@drawable/ripple_effect"
+            android:contentDescription="@string/menu"
             android:padding="22dp"
             app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
 
