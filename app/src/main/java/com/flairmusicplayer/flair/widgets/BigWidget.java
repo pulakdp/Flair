@@ -41,7 +41,7 @@ public class BigWidget extends BaseWidget {
         final RemoteViews bigWidgetView = new RemoteViews(context.getPackageName(), R.layout.widget_big);
 
         bigWidgetView.setViewVisibility(R.id.song_info, View.INVISIBLE);
-        bigWidgetView.setImageViewResource(R.id.image, R.drawable.album_art_placeholder);
+        bigWidgetView.setImageViewResource(R.id.album_art_widget, R.drawable.album_art_placeholder);
         bigWidgetView.setImageViewBitmap(R.id.next_widget,
                 FlairUtils.getBitmapFromVectorDrawable(context, R.drawable.ic_skip_next_black_24dp));
         bigWidgetView.setImageViewBitmap(R.id.prev_widget,
