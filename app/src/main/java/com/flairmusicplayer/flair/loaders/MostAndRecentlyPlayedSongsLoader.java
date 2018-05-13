@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.flairmusicplayer.flair.models.Song;
-import com.flairmusicplayer.flair.providers.RecentStoreContract;
+import com.flairmusicplayer.flair.providers.RecentStore;
 import com.flairmusicplayer.flair.providers.SongPlayCount;
 
 import java.util.ArrayList;
@@ -41,9 +41,7 @@ public class MostAndRecentlyPlayedSongsLoader {
                             SongPlayCount.getInstance(context).removeItem(id);
                             break;
                         case RecentlyPlayed:
-                            //Replacement
-                            context.getContentResolver().delete(RecentStoreContract.RecentStoreColumns.buildSongUri(id), null, null);
-//                            RecentStore.getInstance(context).removeItem(id);
+                            RecentStore.getInstance(context).removeItem(id);
                             break;
                     }
                 }
@@ -68,13 +66,10 @@ public class MostAndRecentlyPlayedSongsLoader {
                 }
                 break;
             case RecentlyPlayed:
-                //Replacement
-                songs = context.getContentResolver().query(RecentStoreContract.RecentStoreColumns.CONTENT_URI,
-                        null, null, null, null);
-//                songs = RecentStore.getInstance(context).queryRecentIds(null);
+                songs = RecentStore.getInstance(context).queryRecentIds(null);
                 try {
                     return makeSortedCursor(context, songs,
-                            songs.getColumnIndex(RecentStoreContract.RecentStoreColumns.SONG_ID));
+                            songs.getColumnIndex(RecentStore.RecentStoreColumns.ID));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

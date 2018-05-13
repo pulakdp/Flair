@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import com.flairmusicplayer.flair.R;
 import com.flairmusicplayer.flair.loaders.MostAndRecentlyPlayedSongsLoader;
-import com.flairmusicplayer.flair.providers.RecentStoreContract;
+import com.flairmusicplayer.flair.providers.RecentStore;
 
 import java.util.ArrayList;
 
@@ -44,9 +44,7 @@ public class RecentlyPlayedPlaylist extends AbsSmartPlaylist {
 
     @Override
     public void clearPlaylist(Context context) {
-        //Replacement
-        context.getContentResolver().delete(RecentStoreContract.RecentStoreColumns.CONTENT_URI, null, null);
-//        RecentStore.getInstance(context).deleteAll();
+        RecentStore.getInstance(context).deleteAll();
     }
 
     @Override
